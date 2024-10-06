@@ -1,0 +1,20 @@
+.hero-section {
+    background: url('../media/alex-wigan-hKbmictIYDM-unsplash.jpg') no-repeat center center;
+    background-size: cover;
+    padding: 80px 0;
+    color: white;
+  }
+  
+  .features-section {
+    background-color: #f8f9fa;
+  }
+  
+  .cta-section {
+    background-color: #e9ecef;
+  }
+  
+  .features-section h3 {
+    margin-top: 20px;
+    font-weight: 600;
+  }
+  
