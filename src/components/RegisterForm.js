@@ -1,21 +1,22 @@
-// src/pages/Register.js
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import bgImage from "../media/alex-wigan-hKbmictIYDM-unsplash.jpg"
+import bgImage from "../media/alex-wigan-hKbmictIYDM-unsplash.jpg";
 
 const RegisterForm = () => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [isBusinessOwner, setIsBusinessOwner] = useState(false); // New state for checkbox
   const [error, setError] = useState('');
   const navigate = useNavigate();
 
   const handleRegister = async (e) => {
     e.preventDefault();
+    const role = isBusinessOwner ? "businessOwner" : "user"; // Determine role based on checkbox
     try {
-      await axios.post('http://localhost:8080/api/users/register', { name, email, password });
-      navigate('/login'); // Redirect to login after successful registration
+      await axios.post('http://localhost:8080/api/users/register', { name, email, password, role });
+      navigate('/login');
     } catch (err) {
       setError('Registration failed');
     }
@@ -104,13 +105,24 @@ const RegisterForm = () => {
               }}
             />
           </div>
+          <div className="mb-3 form-check" style={{ display: 'flex', alignItems: "center" }}>
+            <input
+              type="checkbox"
+              className="form-check-input"
+              id="businessOwner"
+              checked={isBusinessOwner}
+              onChange={(e) => setIsBusinessOwner(e.target.checked)}
+              style={{
+                margin: '0 10px',
+              }}
+            />
+            <label className="form-check-label" htmlFor="businessOwner">Register as Business Owner</label>
+          </div>
           {error && <div className="alert alert-danger">{error}</div>}
           <button type="submit" className="btn btn-primary" style={{ width: '100%', padding: '10px', borderRadius: '5px', backgroundColor: '#007bff', border: 'none' }}>Register</button>
         </form>
       </div>
     </div>
-
-
   );
 };
 

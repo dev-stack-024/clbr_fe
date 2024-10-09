@@ -1,18 +1,19 @@
-// src/components/MapComponent.js
-
 import React, { useEffect, useState } from 'react';
-import { GoogleMap, InfoWindow, LoadScript, MarkerF } from '@react-google-maps/api';
+import { GoogleMap, InfoWindowF, LoadScript, MarkerF } from '@react-google-maps/api';
+import InfoWindowContent from './InfoWindow';
 
-const MapComponent = ({ businesses }) => {
+const MapComponent = ({ businesses, userId }) => {
     const mapContainerStyle = {
         width: '100%',
-        height: '600px',
+        height: '92vh',
     };
 
-    const [currentLocation, setCurrentLocation] = useState(null);
+    console.log(businesses)
+
+    // Set a default location as an initial state
+    const [currentLocation, setCurrentLocation] = useState({ lat: Number(businesses[0].location.coordinates[0]), lng: Number(businesses[0].location.coordinates[1]) }); // Default to San Francisco
     const [selectedBusiness, setSelectedBusiness] = useState(null);
 
-    // Get the user's current location using Geolocation API
     useEffect(() => {
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(
@@ -22,26 +23,21 @@ const MapComponent = ({ businesses }) => {
                 },
                 () => {
                     console.error('Geolocation service failed.');
-                    setCurrentLocation({ lat: 37.7749, lng: -122.4194 }); // Default to a specific location
+                    // Maintain default location if geolocation fails
                 }
             );
         } else {
             console.error('Geolocation is not supported by this browser.');
-            setCurrentLocation({ lat: 37.7749, lng: -122.4194 }); // Default to a specific location
+            // Maintain default location if geolocation is not supported
         }
     }, []);
 
-    // Return a loading message if currentLocation is not available
-    if (!currentLocation) {
-        return <div>Loading map...</div>;
-    }
-
     const handleMarkerClick = (business) => {
-        setSelectedBusiness(business); // Set the clicked business for the InfoWindow
+        setSelectedBusiness(business);
     };
 
     const handleInfoWindowClose = () => {
-        setSelectedBusiness(null); // Close the InfoWindow by clearing the selected business
+        setSelectedBusiness(null);
     };
 
     return (
@@ -54,27 +50,22 @@ const MapComponent = ({ businesses }) => {
                 {businesses.length > 0 ? (
                     businesses.map((business) => (
                         <MarkerF
-                            key={business.id}
-                            position={{ lat: business.latitude, lng: business.longitude }}
-                            onClick={() => handleMarkerClick(business)} // Set info when marker is clicked
+                            key={business._id}
+                            position={{ lat: Number(business.location.coordinates[1]), lng: Number(business.location.coordinates[0]) }}
+                            onClick={() => handleMarkerClick(business)}
                         />
                     ))
                 ) : (
                     <p>No businesses available.</p>
                 )}
 
-                {/* Render only one InfoWindow, if selectedBusiness is not null */}
                 {selectedBusiness && (
-                    <InfoWindow
-                        position={{ lat: selectedBusiness.latitude, lng: selectedBusiness.longitude }}
-                        onCloseClick={handleInfoWindowClose} // Close the InfoWindow
+                    <InfoWindowF
+                        position={{ lat: selectedBusiness.location.coordinates[1], lng: selectedBusiness.location.coordinates[0] }}
+                        onCloseClick={handleInfoWindowClose}
                     >
-                        <div>
-                            <h3>{selectedBusiness.name}</h3>
-                            <p>{selectedBusiness.description}</p>
-                            <p>{selectedBusiness.address}</p>
-                        </div>
-                    </InfoWindow>
+                        <InfoWindowContent selectedBusiness={selectedBusiness} />
+                    </InfoWindowF>
                 )}
             </GoogleMap>
         </LoadScript>

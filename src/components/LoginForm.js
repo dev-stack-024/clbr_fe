@@ -10,14 +10,14 @@ const LoginForm = () => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const navigate = useNavigate();
-  const { login } = useContext(AuthContext); // Use context
+  const { login } = useContext(AuthContext);
 
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
       const response = await axios.post('http://localhost:8080/api/users/login', { email, password });
-      login(response.data.token); // Update context state
-      navigate('/'); // Redirect to home page after login
+      login(response.data.token, response.data);
+      navigate('/map');
     } catch (err) {
       setError('Invalid credentials');
     }
