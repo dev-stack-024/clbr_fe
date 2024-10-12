@@ -1,16 +1,12 @@
 // src/pages/MapPage.js
-
 import React, { useEffect, useState } from 'react';
 import MapComponent from '../components/MapComponent';
 import { useParams } from 'react-router-dom';
-import axios from 'axios';
+import { fetchBusinessesByLocation, fetchBusinessesByUserId } from '../services/businessService';
 
 const MapPage = () => {
-
-    const location = useParams()
-
-
-    const [businesses, setBusinesses] = useState([])
+    const location = useParams();
+    const [businesses, setBusinesses] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
@@ -25,8 +21,8 @@ const MapPage = () => {
                         navigator.geolocation.getCurrentPosition(
                             async (position) => {
                                 const { latitude, longitude } = position.coords;
-                                const response = await axios.get(`http://localhost:8080/api/business?latitude=${latitude}&longitude=${longitude}`);
-                                setBusinesses(response.data);
+                                const data = await fetchBusinessesByLocation(latitude, longitude);
+                                setBusinesses(data);
                                 setLoading(false);
                             },
                             () => {
@@ -41,8 +37,8 @@ const MapPage = () => {
                     }
                 } else {
                     // Fetch businesses by user ID
-                    const response = await axios.get(`http://localhost:8080/api/business?userId=${userId}`);
-                    setBusinesses(response.data);
+                    const data = await fetchBusinessesByUserId(userId);
+                    setBusinesses(data);
                     setLoading(false);
                 }
             } catch (err) {
@@ -61,7 +57,6 @@ const MapPage = () => {
     if (error) {
         return <div>{error}</div>;
     }
-
 
     return (
         <div>

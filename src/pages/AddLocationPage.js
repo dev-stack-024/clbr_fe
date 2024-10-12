@@ -1,42 +1,60 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import AddLocationComp from '../components/AddLocationComp';
-
+import { fetchBusinessesByLocation, fetchBusinessesByUserId } from '../services/businessService';
+import { useParams } from 'react-router-dom';
 
 const AddLocationPage = () => {
-    const businesses = [
-        {
-            id: 1,
-            name: "Joe's Coffee",
-            latitude: 30.5265298,
-            longitude: 78.3572451,
-            address: "123 Coffee St, San Francisco, CA",
-            category: "Coffee Shop"
-        },
-        {
-            id: 2,
-            name: "Beauty Bliss",
-            latitude: 37.7799,
-            longitude: -122.4144,
-            address: "456 Beauty Ave, San Francisco, CA",
-            category: "Beauty Salon"
-        },
-        {
-            id: 3,
-            name: "Fitness Hub",
-            latitude: 37.7729,
-            longitude: -122.4294,
-            address: "789 Fitness Rd, San Francisco, CA",
-            category: "Gym"
-        },
-        {
-            id: 4,
-            name: "The Book Nook",
-            latitude: 37.7699,
-            longitude: -122.4194,
-            address: "321 Book Ln, San Francisco, CA",
-            category: "Bookstore"
-        }
-    ];
+    const location = useParams();
+    const [businesses, setBusinesses] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+
+    useEffect(() => {
+        const fetchBusinesses = async () => {
+            try {
+                const userId = location.id;
+
+                // If user ID is not provided, fetch businesses based on the current location
+                if (!userId) {
+                    if (navigator.geolocation) {
+                        navigator.geolocation.getCurrentPosition(
+                            async (position) => {
+                                const { latitude, longitude } = position.coords;
+                                const data = await fetchBusinessesByLocation(latitude, longitude);
+                                console.log(data)
+                                setBusinesses(data);
+                                setLoading(false);
+                            },
+                            () => {
+                                setError('Unable to retrieve your location. Please provide a user ID.');
+                                setLoading(false);
+                            }
+                        );
+                    } else {
+                        setError('Geolocation is not supported by this browser.');
+                        setLoading(false);
+                    }
+                } else {
+                    const data = await fetchBusinessesByUserId(userId);
+                    setBusinesses(data);
+                    setLoading(false);
+                }
+            } catch (err) {
+                setError('Error fetching businesses. Please try again later.');
+                setLoading(false);
+            }
+        };
+
+        fetchBusinesses();
+    }, [location.id]);
+
+    if (loading) {
+        return <div>Loading businesses...</div>;
+    }
+
+    if (error) {
+        return <div>{error}</div>;
+    }
 
     return (
         <div>

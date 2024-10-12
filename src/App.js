@@ -1,7 +1,6 @@
 import React, { useContext } from 'react';
 import { BrowserRouter as Router, Route, Routes, Navigate, useLocation } from 'react-router-dom';
 import Header from './components/Header';
-import Home from './pages/Home';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import BusinessDetails from './pages/BusinessDetails';
@@ -10,6 +9,7 @@ import ProtectedRoute from './components/ProtectedRoute';
 import MapPage from './pages/MapPage';
 import AddLocationPage from './pages/AddLocationPage';
 import { AuthContext } from './context/AuthContext';
+import { LoadScript } from '@react-google-maps/api';
 
 const AppContent = () => {
   const { isAuthenticated } = useContext(AuthContext);
@@ -20,60 +20,54 @@ const AppContent = () => {
 
   return (
     <>
-      {/* Conditionally render the Header only if the current path is not in hideHeaderPaths */}
-      {isAuthenticated && !hideHeaderPaths.includes(location.pathname) && <Header />}
+      <LoadScript googleMapsApiKey={process.env.REACT_APP_GOOGLE_MAPS_API_KEY}>
+        {/* Conditionally render the Header only if the current path is not in hideHeaderPaths */}
+        {isAuthenticated && !hideHeaderPaths.includes(location.pathname) && <Header />}
 
-      <Routes>
-        {/* Public Routes */}
-        <Route path="/" element={<LandingPage />} />  {/* Landing Page available to everyone */}
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
+        <Routes>
+          {/* Public Routes */}
+          <Route path="/" element={<LandingPage />} />  {/* Landing Page available to everyone */}
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
 
-        {/* Protected Routes for authenticated users only */}
-        <Route
-          path="/home"
-          element={
-            <ProtectedRoute>
-              <Home />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/map"
-          element={
-            <ProtectedRoute>
-              <MapPage />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/my-location/:id"
-          element={
-            <ProtectedRoute>
-              <MapPage />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/add-location"
-          element={
-            <ProtectedRoute>
-              <AddLocationPage />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/business/:id"
-          element={
-            <ProtectedRoute>
-              <BusinessDetails />
-            </ProtectedRoute>
-          }
-        />
+          {/* Protected Routes for authenticated users only */}
+          <Route
+            path="/map"
+            element={
+              <ProtectedRoute>
+                <MapPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/my-location/:id"
+            element={
+              <ProtectedRoute>
+                <MapPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/add-location"
+            element={
+              <ProtectedRoute>
+                <AddLocationPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/business/:id"
+            element={
+              <ProtectedRoute>
+                <BusinessDetails />
+              </ProtectedRoute>
+            }
+          />
 
-        {/* Redirect any non-matching route to the landing page */}
-        <Route path="*" element={<Navigate to="/" />} />
-      </Routes>
+          {/* Redirect any non-matching route to the landing page */}
+          <Route path="*" element={<Navigate to="/" />} />
+        </Routes>
+      </LoadScript>
     </>
   );
 };

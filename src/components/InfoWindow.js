@@ -1,5 +1,5 @@
-import { InfoWindowF } from '@react-google-maps/api';
 import React from 'react';
+import { Row, Col } from 'react-bootstrap';
 
 const InfoWindowContent = ({ selectedBusiness }) => {
     const styles = {
@@ -16,7 +16,6 @@ const InfoWindowContent = ({ selectedBusiness }) => {
             marginBottom: '10px',
         },
         imageContainer: {
-            textAlign: 'center',
             marginBottom: '10px',
         },
         businessImage: {
@@ -43,13 +42,25 @@ const InfoWindowContent = ({ selectedBusiness }) => {
     return (
         <div style={styles.infoWindow}>
             <h3 style={styles.businessName}>{selectedBusiness.name}</h3>
+
             <div style={styles.imageContainer}>
-                <img
-                    src={selectedBusiness.imageUrl}
-                    alt={selectedBusiness.name}
-                    style={styles.businessImage}
-                />
+                <Row>
+                    {selectedBusiness.images && selectedBusiness.images.length > 0 ? (
+                        selectedBusiness.images.map((imageUrl, index) => (
+                            <Col key={index} xs={6}>
+                                <img
+                                    src={imageUrl}
+                                    alt={`${selectedBusiness.name} ${index}`}
+                                    style={styles.businessImage}
+                                />
+                            </Col>
+                        ))
+                    ) : (
+                        <p>No images available</p>
+                    )}
+                </Row>
             </div>
+
             <p style={styles.description}>{selectedBusiness.description}</p>
             <div style={styles.details}>
                 <p style={styles.detailItem}>
@@ -65,7 +76,5 @@ const InfoWindowContent = ({ selectedBusiness }) => {
         </div>
     );
 };
-
-
 
 export default InfoWindowContent;

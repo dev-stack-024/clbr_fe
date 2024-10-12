@@ -1,32 +1,19 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { GoogleMap, InfoWindowF, LoadScript, MarkerF } from '@react-google-maps/api';
-import axios from 'axios';
+import { GoogleMap, MarkerF } from '@react-google-maps/api';
 import { AuthContext } from '../context/AuthContext';
+import { Modal, Button } from 'react-bootstrap';
+import { uploadImages, createBusiness } from '../services/businessService'; // Import the service functions
+import { toast } from 'react-toastify';
+// import InfoWindowContent from './InfoWindow';
 
 const AddLocationComp = ({ businesses }) => {
+    console.log(businesses)
     const { user } = useContext(AuthContext);
-    const [clickedLocation, setClickedLocation] = useState(null);
+    // const [clickedLocation, setClickedLocation] = useState(null);
+    const [showModal, setShowModal] = useState(false);
     const mapContainerStyle = {
-        width: clickedLocation ? '70%' : "100%", // Adjusted to allow space for the form
+        width: '100%',
         height: '92vh',
-    };
-
-    const formContainerStyle = {
-        width: '30%',
-        padding: '20px',
-        backgroundColor: '#f9f9f9',
-        borderLeft: '1px solid #ddd',
-        boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)',
-        height: '92vh',
-        overflowY: 'auto',
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'center',
-    };
-
-    const labelStyle = {
-        marginBottom: '10px',
-        fontSize: '14px',
     };
 
     const inputStyle = {
@@ -48,19 +35,8 @@ const AddLocationComp = ({ businesses }) => {
         resize: 'none',
     };
 
-    const buttonStyle = {
-        marginTop: '20px',
-        padding: '10px',
-        backgroundColor: '#28a745',
-        color: 'white',
-        border: 'none',
-        borderRadius: '4px',
-        fontSize: '16px',
-        cursor: 'pointer',
-    };
-
     const [currentLocation, setCurrentLocation] = useState(null);
-    const [selectedBusiness, setSelectedBusiness] = useState(null);
+    const [selectedFiles, setSelectedFiles] = useState([]);
 
     const [formData, setFormData] = useState({
         name: '',
@@ -70,7 +46,7 @@ const AddLocationComp = ({ businesses }) => {
         longitude: '',
         phone: '',
         description: '',
-        images: '',
+        images: [],
     });
 
     // Get user's current location
@@ -96,19 +72,13 @@ const AddLocationComp = ({ businesses }) => {
         return <div>Loading map...</div>;
     }
 
-    const handleMarkerClick = (business) => {
-        setSelectedBusiness(business);
-    };
-
-    const handleInfoWindowClose = () => {
-        setSelectedBusiness(null);
-    };
-
     const handleMapClick = (event) => {
+        console.log("im hwre")
         const lat = event.latLng.lat();
         const lng = event.latLng.lng();
-        setClickedLocation({ lat, lng });
+        // setClickedLocation({ lat, lng });
         setFormData({ ...formData, latitude: lat, longitude: lng });
+        setShowModal(true);
     };
 
     const handleInputChange = (e) => {
@@ -116,21 +86,31 @@ const AddLocationComp = ({ businesses }) => {
         setFormData({ ...formData, [name]: value });
     };
 
+    const handleFileChange = (e) => {
+        setSelectedFiles(e.target.files);
+    };
+
     const handleFormSubmit = async (e) => {
         e.preventDefault();
-
         try {
-            const token = user.token; // Get the token from localStorage
+            const token = user.token;
 
-            // Make a POST request to the backend API
-            const response = await axios.post('http://localhost:8080/api/business', formData, {
-                headers: {
-                    Authorization: `Bearer ${token}`, // Attach the token in headers
-                },
-            });
+            // Upload images and get URLs
+            const imageUrls = await uploadImages(selectedFiles, token);
+            console.log(imageUrls)
+            const updatedFormData = {
+                ...formData,
+                images: imageUrls,  // Set the images after they are uploaded
+            };
 
-            console.log('Business created:', response.data);
-            // Optionally, reset the form or give feedback to the user
+            console.log(formData)
+
+            // Create business
+            const createdBusiness = await createBusiness(updatedFormData, token);
+            console.log('Business created:', createdBusiness);
+
+            toast.success("Business added successfully.")
+
             setFormData({
                 name: '',
                 type: '',
@@ -141,68 +121,60 @@ const AddLocationComp = ({ businesses }) => {
                 description: '',
                 images: '',
             });
-            setClickedLocation(null); // Clear the clicked location
+            // setClickedLocation(null);
+            setShowModal(false);
         } catch (error) {
-            console.error('Error creating business:', error.response ? error.response.data : error.message);
+            console.error('Error creating business:', error.message);
+            toast.error("Business adding failed")
         }
-
     };
 
     return (
-        <div style={{ display: 'flex' }}>
-            <LoadScript googleMapsApiKey={process.env.REACT_APP_GOOGLE_MAPS_API_KEY}>
-                <GoogleMap
-                    mapContainerStyle={mapContainerStyle}
-                    center={currentLocation}
-                    zoom={15}
-                    onClick={handleMapClick}
-                >
-                    {businesses.length > 0 ? (
-                        businesses.map((business) => (
-                            <MarkerF
-                                key={business.id}
-                                position={{ lat: business.latitude, lng: business.longitude }}
-                                onClick={() => handleMarkerClick(business)}
-                            />
-                        ))
-                    ) : (
-                        <p>No businesses available.</p>
-                    )}
+        <div>
 
-                    {selectedBusiness && (
-                        <InfoWindowF
-                            position={{ lat: selectedBusiness.latitude, lng: selectedBusiness.longitude }}
-                            onCloseClick={handleInfoWindowClose}
-                        >
-                            <div>
-                                <h3>{selectedBusiness.name}</h3>
-                                <p>{selectedBusiness.description}</p>
-                                <p>{selectedBusiness.address}</p>
-                            </div>
-                        </InfoWindowF>
-                    )}
+            <GoogleMap
+                mapContainerStyle={mapContainerStyle}
+                center={currentLocation}
+                zoom={15}
+                onClick={handleMapClick}
+            >
+                {businesses.length > 0 ? (
+                    businesses.map((business) => (
+                        <MarkerF
+                            key={business.id}
+                            position={{ lat: business.latitude, lng: business.longitude }}
+                        />
+                    ))
+                ) : (
+                    <p>No businesses available.</p>
+                )}
 
-                    {clickedLocation && (
+                <MarkerF
+                    position={currentLocation}
+                    icon={{
+                        url: 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png',
+                    }}
+                />
+
+                {/* {clickedLocation && (
                         <InfoWindowF
                             position={clickedLocation}
                             onCloseClick={() => setClickedLocation(null)}
-                        >
-                            <div>
-                                <h4>Clicked Location</h4>
-                                <p>Latitude: {clickedLocation.lat}</p>
-                                <p>Longitude: {clickedLocation.lng}</p>
-                            </div>
-                        </InfoWindowF>
-                    )}
-                </GoogleMap>
-            </LoadScript>
+                        > */}
+                {/* <InfoWindowContent selectedBusiness={selectedBusiness} /> */}
+                {/* </InfoWindowF>
+                    )} */}
+            </GoogleMap>
 
-            {/* Form UI for adding business */}
-            {clickedLocation &&
-                <div style={formContainerStyle}>
-                    <h2 style={{ textAlign: 'center' }}>Add a Business</h2>
+
+            {/* Modal for adding business */}
+            <Modal show={showModal} onHide={() => setShowModal(false)} centered>
+                <Modal.Header closeButton>
+                    <Modal.Title>Add a Business</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
                     <form onSubmit={handleFormSubmit} style={{ display: 'flex', flexDirection: 'column' }}>
-                        <label style={labelStyle}>
+                        <label>
                             Business Name:
                             <input
                                 type="text"
@@ -214,7 +186,7 @@ const AddLocationComp = ({ businesses }) => {
                             />
                         </label>
 
-                        <label style={labelStyle}>
+                        <label>
                             Type:
                             <select
                                 name="type"
@@ -230,7 +202,7 @@ const AddLocationComp = ({ businesses }) => {
                             </select>
                         </label>
 
-                        <label style={labelStyle}>
+                        <label>
                             Address:
                             <input
                                 type="text"
@@ -242,7 +214,7 @@ const AddLocationComp = ({ businesses }) => {
                             />
                         </label>
 
-                        <label style={labelStyle}>
+                        <label>
                             Latitude:
                             <input
                                 type="number"
@@ -254,7 +226,7 @@ const AddLocationComp = ({ businesses }) => {
                             />
                         </label>
 
-                        <label style={labelStyle}>
+                        <label>
                             Longitude:
                             <input
                                 type="number"
@@ -266,7 +238,7 @@ const AddLocationComp = ({ businesses }) => {
                             />
                         </label>
 
-                        <label style={labelStyle}>
+                        <label>
                             Phone:
                             <input
                                 type="text"
@@ -277,7 +249,7 @@ const AddLocationComp = ({ businesses }) => {
                             />
                         </label>
 
-                        <label style={labelStyle}>
+                        <label>
                             Description:
                             <textarea
                                 name="description"
@@ -288,20 +260,22 @@ const AddLocationComp = ({ businesses }) => {
                             />
                         </label>
 
-                        <label style={labelStyle}>
-                            Images (Comma-separated URLs):
+                        <label>
+                            Upload Images:
                             <input
-                                type="text"
-                                name="images"
-                                value={formData.images}
-                                onChange={handleInputChange}
+                                type="file"
+                                multiple
+                                onChange={handleFileChange}
                                 style={inputStyle}
                             />
                         </label>
 
-                        <button type="submit" style={buttonStyle}>Add Business</button>
+                        <Button type="submit" variant="success" style={{ marginTop: '20px' }}>
+                            Add Business
+                        </Button>
                     </form>
-                </div>}
+                </Modal.Body>
+            </Modal>
         </div>
     );
 };

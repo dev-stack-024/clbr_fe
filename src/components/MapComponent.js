@@ -1,5 +1,6 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from 'react';
-import { GoogleMap, InfoWindowF, LoadScript, MarkerF } from '@react-google-maps/api';
+import { GoogleMap, InfoWindowF, MarkerF } from '@react-google-maps/api';
 import InfoWindowContent from './InfoWindow';
 
 const MapComponent = ({ businesses, userId }) => {
@@ -8,14 +9,16 @@ const MapComponent = ({ businesses, userId }) => {
         height: '92vh',
     };
 
-    console.log(businesses)
-
     // Set a default location as an initial state
-    const [currentLocation, setCurrentLocation] = useState({ lat: Number(businesses[0].location.coordinates[0]), lng: Number(businesses[0].location.coordinates[1]) }); // Default to San Francisco
+    const [currentLocation, setCurrentLocation] = useState({});
     const [selectedBusiness, setSelectedBusiness] = useState(null);
 
     useEffect(() => {
-        if (navigator.geolocation) {
+        console.log(currentLocation, "currentLocation")
+        if (userId) {
+            setCurrentLocation({ lat: Number(businesses[0].location.coordinates[1]), lng: Number(businesses[0].location.coordinates[0]) });
+
+        } else if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(
                 (position) => {
                     const { latitude, longitude } = position.coords;
@@ -39,36 +42,43 @@ const MapComponent = ({ businesses, userId }) => {
     const handleInfoWindowClose = () => {
         setSelectedBusiness(null);
     };
-
+    console.log(currentLocation)
     return (
-        <LoadScript googleMapsApiKey={process.env.REACT_APP_GOOGLE_MAPS_API_KEY}>
-            <GoogleMap
-                mapContainerStyle={mapContainerStyle}
-                center={currentLocation}
-                zoom={15}
-            >
-                {businesses.length > 0 ? (
-                    businesses.map((business) => (
-                        <MarkerF
-                            key={business._id}
-                            position={{ lat: Number(business.location.coordinates[1]), lng: Number(business.location.coordinates[0]) }}
-                            onClick={() => handleMarkerClick(business)}
-                        />
-                    ))
-                ) : (
-                    <p>No businesses available.</p>
-                )}
 
-                {selectedBusiness && (
-                    <InfoWindowF
-                        position={{ lat: selectedBusiness.location.coordinates[1], lng: selectedBusiness.location.coordinates[0] }}
-                        onCloseClick={handleInfoWindowClose}
-                    >
-                        <InfoWindowContent selectedBusiness={selectedBusiness} />
-                    </InfoWindowF>
-                )}
-            </GoogleMap>
-        </LoadScript>
+        <GoogleMap
+            mapContainerStyle={mapContainerStyle}
+            center={currentLocation}
+            zoom={15}
+        >
+            {businesses.length > 0 ? (
+                businesses.map((business) => (
+                    <MarkerF
+                        key={business._id}
+                        position={{ lat: Number(business.location.coordinates[1]), lng: Number(business.location.coordinates[0]) }}
+                        onClick={() => handleMarkerClick(business)}
+                    />
+                ))
+            ) : (
+                <p>No businesses available.</p>
+            )}
+            {!userId &&
+                <MarkerF
+                    position={currentLocation}
+                    icon={{
+                        url: 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png', // Optional: use a blue marker to distinguish current location
+                    }}
+                />}
+
+            {selectedBusiness && (
+                <InfoWindowF
+                    position={{ lat: selectedBusiness.location.coordinates[1], lng: selectedBusiness.location.coordinates[0] }}
+                    onCloseClick={handleInfoWindowClose}
+                >
+                    <InfoWindowContent selectedBusiness={selectedBusiness} />
+                </InfoWindowF>
+            )}
+        </GoogleMap>
+
     );
 };
 

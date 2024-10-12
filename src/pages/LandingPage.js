@@ -35,7 +35,7 @@ const LandingPage = () => {
                     <Container>
                         <Row className="align-items-center" style={{ height: "200px" }}>
                             <Col md={12}>
-                                <h1 className="display-4">Welcome, {user.name}!</h1>
+                                <h1 className="display-4">Welcome, {user.user.name}!</h1>
                                 <p className="lead">Together, let's celebrate our local gems and make informed choices. Your community awaits!</p>
                             </Col>
                         </Row>
