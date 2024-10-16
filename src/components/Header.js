@@ -48,8 +48,8 @@ const Header = () => {
           <Nav className="ml-auto" style={{ display: 'flex', alignItems: 'center', width: '100%' }}>
             <div>
               <Link to="/" style={navLinkStyle}><b>Home</b></Link>
-              {user.user.role === "businessOwner" && <Link to="/add-location" style={navLinkStyle}><b>Add Bussiness</b></Link>}
-              {user.user.role === "businessOwner" && <Link to={`/my-location/${user.user._id}`} style={navLinkStyle}><b>My Bussiness</b></Link>}
+              {user.user.role === "businessOwner" && <Link to="/add-location" style={navLinkStyle}><b>Add Business</b></Link>}
+              {user.user.role === "businessOwner" && <Link to={`/my-location/${user.user._id}`} style={navLinkStyle}><b>My Business</b></Link>}
             </div>
             {!isAuthenticated ? (
               <>
