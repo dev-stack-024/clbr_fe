@@ -1,10 +1,12 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import AddLocationComp from '../components/AddLocationComp';
 import { fetchBusinessesByLocation, fetchBusinessesByUserId } from '../services/businessService';
 import { useParams } from 'react-router-dom';
+import { AuthContext } from '../context/AuthContext';
 
 const AddLocationPage = () => {
     const location = useParams();
+    const { user } = useContext(AuthContext);
     const [businesses, setBusinesses] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -20,7 +22,7 @@ const AddLocationPage = () => {
                         navigator.geolocation.getCurrentPosition(
                             async (position) => {
                                 const { latitude, longitude } = position.coords;
-                                const data = await fetchBusinessesByLocation(latitude, longitude);
+                                const data = await fetchBusinessesByLocation(latitude, longitude, user.token);
                                 console.log(data)
                                 setBusinesses(data);
                                 setLoading(false);
@@ -35,7 +37,7 @@ const AddLocationPage = () => {
                         setLoading(false);
                     }
                 } else {
-                    const data = await fetchBusinessesByUserId(userId);
+                    const data = await fetchBusinessesByUserId(userId, user.token);
                     setBusinesses(data);
                     setLoading(false);
                 }
@@ -46,7 +48,7 @@ const AddLocationPage = () => {
         };
 
         fetchBusinesses();
-    }, [location.id]);
+    }, [location.id, user]);
 
     if (loading) {
         return <div>Loading businesses...</div>;

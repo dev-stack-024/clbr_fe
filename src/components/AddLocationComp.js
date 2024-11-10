@@ -73,7 +73,7 @@ const AddLocationComp = ({ businesses }) => {
     }
 
     const handleMapClick = (event) => {
-        console.log("im hwre")
+        // console.log("im hwre")
         const lat = event.latLng.lat();
         const lng = event.latLng.lng();
         // setClickedLocation({ lat, lng });

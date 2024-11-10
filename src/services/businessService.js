@@ -2,9 +2,16 @@
 
 import axios from 'axios';
 
-export const fetchBusinessesByLocation = async (latitude, longitude) => {
+export const fetchBusinessesByLocation = async (latitude, longitude, token) => {
     try {
-        const response = await axios.get(`http://localhost:8080/api/business?latitude=${latitude}&longitude=${longitude}`);
+        const response = await axios.get(
+            `http://localhost:8080/api/business?latitude=${latitude}&longitude=${longitude}`,
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`, 
+                },
+            }
+        );
         return response.data;
     } catch (error) {
         throw new Error('Error fetching businesses by location');
@@ -12,9 +19,14 @@ export const fetchBusinessesByLocation = async (latitude, longitude) => {
 };
 
 // Fetch businesses by user ID
-export const fetchBusinessesByUserId = async (userId) => {
+export const fetchBusinessesByUserId = async (userId, token) => {
     try {
-        const response = await axios.get(`http://localhost:8080/api/business?userId=${userId}`);
+        const response = await axios.get(`http://localhost:8080/api/business?userId=${userId}`,
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,  // Token for authentication
+                },
+            });
         return response.data;
     } catch (error) {
         throw new Error('Error fetching businesses by user ID');
