@@ -260,7 +260,7 @@ const AddLocationComp = ({ businesses }) => {
                             />
                         </label>
 
-                        {/*<label>
+                        <label>
                             Upload Images:
                             <input
                                 type="file"
@@ -268,7 +268,7 @@ const AddLocationComp = ({ businesses }) => {
                                 onChange={handleFileChange}
                                 style={inputStyle}
                             />
-                        </label>*/}
+                        </label>
 
                         <Button type="submit" variant="success" style={{ marginTop: '20px' }}>
                             Add Business
