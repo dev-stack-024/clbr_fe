@@ -1,264 +1,10 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-// import React, { useState, useContext, useEffect } from 'react';
-// import { Row, Col, Form, Button, Card } from 'react-bootstrap';
-// import { FaStar } from 'react-icons/fa';
-// import axios from 'axios';
-// import { AuthContext } from '../context/AuthContext';
-
-// const InfoWindowContent = ({ selectedBusiness, fetchBusinesses }) => {
-//     const { user } = useContext(AuthContext);
-//     const [hover, setHover] = useState(0);
-//     const [businesses, setBusinesses] = useState(selectedBusiness);
-//     const [isSubmitting, setIsSubmitting] = useState(false);
-//     const [reviews, setReviews] = useState([]);
-//     const [newReviewText, setNewReviewText] = useState('');
-
-
-//     useEffect(() => {
-//         setBusinesses(selectedBusiness);
-//         fetchReviews();
-//     }, [selectedBusiness]);
-
-//     const fetchReviews = async () => {
-//         try {
-//             const response = await axios.get(`http://localhost:8080/api/reviews/${selectedBusiness._id}`,
-//                 {
-//                     headers: {
-//                         'Authorization': `Bearer ${user.token}`,
-//                         'Content-Type': 'application/json',
-//                     }
-//                 }
-//             );
-//             setReviews(response.data.reviews);
-//         } catch (error) {
-//             console.error("Error fetching reviews:", error);
-//         }
-//     };
-
-
-//     const handleAddReview = async () => {
-
-//         setIsSubmitting(true);
-//         try {
-//             const response = await axios.post('http://localhost:8080/api/reviews/add-review', {
-//                 businessId: businesses._id,
-//                 reviewText: newReviewText
-//             }, {
-//                 headers: {
-//                     'Authorization': `Bearer ${user.token}`,
-//                     'Content-Type': 'application/json',
-//                 },
-//             });
-
-//             setReviews([...reviews, response.data.review]); // Add new review to list
-//             setNewReviewText('');
-//         } catch (error) {
-//             console.error("Error adding review:", error);
-//         } finally {
-//             setIsSubmitting(false);
-//         }
-//     };
-
-//     const handleRatingSubmit = async (selectedRating) => {
-//         setIsSubmitting(true);
-//         try {
-//             console.log('Submitting rating:', businesses._id, selectedRating);
-//             await axios.post('http://localhost:8080/api/rate/business', {
-//                 businessId: businesses._id,
-//                 rating: selectedRating,
-//             }, {
-//                 headers: {
-//                     'Authorization': `Bearer ${user.token}`,
-//                     'Content-Type': 'application/json',
-//                 },
-//             });
-//             fetchBusinesses()
-
-//         } catch (error) {
-//             console.error("Error submitting rating:", error);
-//         } finally {
-//             setIsSubmitting(false);
-//         }
-//     };
-
-//     const styles = {
-//         infoWindow: {
-//             fontFamily: 'Arial, sans-serif',
-//             padding: '10px',
-//         },
-//         businessName: {
-//             fontSize: '18px',
-//             fontWeight: 'bold',
-//             marginBottom: '10px',
-//         },
-//         imageContainer: {
-//             marginBottom: '10px',
-//         },
-//         businessImage: {
-//             width: '100%',
-//             height: 'auto',
-//             borderRadius: '8px',
-//         },
-//         description: {
-//             fontSize: '14px',
-//             marginBottom: '5px',
-//         },
-//         details: {
-//             fontSize: '13px',
-//         },
-//         detailItem: {
-//             margin: '5px 0',
-//         },
-//         detailLabel: {
-//             color: '#333',
-//             fontWeight: 'bold',
-//         },
-//         ratingContainer: {
-//             display: 'flex',
-//             justifyContent: "space-around",
-//             alignItems: 'center',
-//             marginTop: '10px',
-//         },
-//         star: {
-//             cursor: 'pointer',
-//             color: '#e4e5e9',
-//             fontSize: '20px',
-//             marginRight: '5px',
-//         },
-//         filledStar: {
-//             color: '#ffc107',
-//         },
-//     };
-
-//     return (
-//         <div style={styles.infoWindow}>
-//             <h3 style={styles.businessName}>{businesses.name}</h3>
-
-//             <div style={styles.imageContainer}>
-//                 <Row>
-//                     {businesses.images && businesses.images.length > 0 ? (
-//                         businesses.images.map((imageUrl, index) => (
-//                             <Col key={index} xs={6}>
-//                                 <img
-//                                     src={imageUrl}
-//                                     alt={`${businesses.name} ${index}`}
-//                                     style={styles.businessImage}
-//                                 />
-//                             </Col>
-//                         ))
-//                     ) : (
-//                         <p>No images available</p>
-//                     )}
-//                 </Row>
-//             </div>
-
-//             <p style={styles.description}>{businesses.description}</p>
-//             {/* <div style={styles.details}>
-//                 <p style={styles.detailItem}>
-//                     <span style={styles.detailLabel}>Address:</span> {businesses.address}
-//                 </p>
-//                 <p style={styles.detailItem}>
-//                     <span style={styles.detailLabel}>Latitude:</span> {businesses.location.coordinates[1]}
-//                 </p>
-//                 <p style={styles.detailItem}>
-//                     <span style={styles.detailLabel}>Longitude:</span> {businesses.location.coordinates[0]}
-//                 </p>
-//             </div> */}
-
-//             <div style={styles.details}>
-//                 <p><strong>Address:</strong> {businesses.address}</p>
-//                 <p><strong>Coordinates:</strong> ({businesses.location.coordinates[1]}, {businesses.location.coordinates[0]})</p>
-//             </div>
-
-//             <div style={styles.ratingContainer}>
-//                 <div>
-//                     <p style={styles.detailLabel}>Average Rating:</p>
-//                     <div style={{ display: "flex", alignItems: 'center' }}>
-//                         <div style={{ display: 'flex', alignItems: 'center' }}>
-//                             {[1, 2, 3, 4, 5].map((star) => (
-//                                 <FaStar
-//                                     key={star}
-//                                     style={{ ...styles.star, ...(star <= businesses.averageRating ? styles.filledStar : {}) }}
-//                                 />
-//                             ))}
-//                             <p style={{ marginBottom: "-2px" }}>({businesses.averageRating.toFixed(1)})</p>
-//                         </div>
-//                     </div>
-//                 </div>
-//                 <div>
-//                     <p style={styles.detailLabel}>Your Rating:</p>
-//                     <div style={{ display: 'flex', alignItems: 'center' }}>
-//                         {[1, 2, 3, 4, 5].map((star) => (
-//                             <FaStar
-//                                 key={star}
-//                                 style={{ ...styles.star, ...(star <= (hover || businesses.ownRating) ? styles.filledStar : {}) }}
-//                                 onMouseEnter={() => setHover(star)}
-//                                 onMouseLeave={() => setHover(0)}
-//                                 onClick={() => handleRatingSubmit(star)}
-//                                 disabled={isSubmitting}
-//                             />
-//                         ))}
-//                     </div>
-//                 </div>
-//             </div>
-
-//             {isSubmitting && <p>Submitting your rating...</p>}
-
-
-
-//             {/* Add New Review Section */}
-//             <div className="mt-4">
-//                 <h5>Add a Review</h5>
-//                 <Form.Group>
-//                     <Form.Control
-//                         as="textarea"
-//                         rows={3}
-//                         placeholder="Write your review here..."
-//                         value={newReviewText}
-//                         onChange={(e) => setNewReviewText(e.target.value)}
-//                         className="mb-2"
-//                     />
-//                 </Form.Group>
-//                 <Button
-//                     variant="primary"
-//                     onClick={handleAddReview}
-//                     disabled={isSubmitting}
-//                 >
-//                     {isSubmitting ? "Submitting..." : "Submit Review"}
-//                 </Button>
-//             </div>
-
-//             {/* Display Reviews */}
-//             <div className="mt-4">
-//                 <h5>Reviews</h5>
-//                 {reviews.length > 0 ? (
-//                     reviews.map((review, index) => (
-//                         <Card key={index} className="mb-3 p-2" style={{ backgroundColor: '#f8f9fa', borderRadius: '8px' }}>
-//                             <Card.Body>
-//                                 <div style={styles.reviewAuthor}>{review.user.name}</div>
-//                                 <p style={styles.reviewText}>{review.reviewText}</p>
-//                             </Card.Body>
-//                         </Card>
-//                     ))
-//                 ) : (
-//                     <p>No reviews available</p>
-//                 )}
-//             </div>
-//         </div>
-//     );
-// };
-
-// export default InfoWindowContent;
-
-
-
-
 
 import React, { useState, useContext, useEffect } from 'react';
-import { Row, Col, Form, Button, Card } from 'react-bootstrap';
+import { Row, Col, Form, Button, Card, Image } from 'react-bootstrap';
 import { FaStar } from 'react-icons/fa';
 import axios from 'axios';
 import { AuthContext } from '../context/AuthContext';
+import defaultProfilePictureUrl from "../assets/defaultAvatar.jpg"
 
 const InfoWindowContent = ({ selectedBusiness, fetchBusinesses }) => {
     const { user } = useContext(AuthContext);
@@ -354,13 +100,13 @@ const InfoWindowContent = ({ selectedBusiness, fetchBusinesses }) => {
         text: {
             fontSize: '14px',
             color: '#666666',
-            lineHeight: '1.5'
+            lineHeight: '1'
         },
         label: {
             fontSize: '14px',
             fontWeight: '600',
             color: '#555555',
-            marginBottom: '5px'
+            marginBottom: '2px'
         },
         image: {
             width: '100%',
@@ -383,6 +129,7 @@ const InfoWindowContent = ({ selectedBusiness, fetchBusinesses }) => {
         reviewCard: {
             backgroundColor: '#f8f9fa',
             borderRadius: '8px',
+            marginBottom: '2px'
         }
     };
 
@@ -493,9 +240,19 @@ const InfoWindowContent = ({ selectedBusiness, fetchBusinesses }) => {
                     {reviews.length > 0 ? (
                         reviews.map((review, index) => (
                             <Card key={index} style={styles.reviewCard}>
-                                <Card.Body>
-                                    <p style={styles.label}>{review.user.name}</p>
-                                    <p style={styles.text}>{review.reviewText}</p>
+                                <Card.Body style={{ display: 'flex', alignItems: 'center' }}>
+                                    <Image
+                                        src={review.user.profilePictureURL || defaultProfilePictureUrl}
+                                        roundedCircle
+                                        width={30} // Adjust size as needed
+                                        height={30}
+                                        alt="User Profile"
+                                        style={{ marginRight: '10px' }}
+                                    />
+                                    <div>
+                                        <p style={styles.label}>{review.user.name}</p>
+                                        <p style={styles.text}>{review.reviewText}</p>
+                                    </div>
                                 </Card.Body>
                             </Card>
                         ))

@@ -1,7 +1,8 @@
 import React, { useContext } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Navbar, Nav, Container, Button } from 'react-bootstrap';
+import { Navbar, Nav, Container, Button, Image } from 'react-bootstrap';
 import { AuthContext } from '../context/AuthContext'; // Ensure correct path
+import defaultAvatar from '../assets/defaultAvatar.jpg'; // Path to default avatar image
 
 const Header = () => {
   const { isAuthenticated, logout, user } = useContext(AuthContext);
@@ -12,6 +13,10 @@ const Header = () => {
     navigate('/login');
   };
 
+
+  const handleProfileClick = () => {
+    navigate('/profile');
+  };
   // Inline styles for a more visually appealing header
   const headerStyle = {
     backgroundColor: '#282c34',
@@ -35,9 +40,17 @@ const Header = () => {
 
   const logoutButtonStyle = {
     marginLeft: 'auto', // Push the button to the right
+    display: 'flex',
+    alignItems: 'center',
   };
 
-  console.log(user)
+  const avatarStyle = {
+    width: '35px',
+    height: '35px',
+    borderRadius: '50%',
+    marginRight: '10px',
+    cursor: "pointer"
+  };
 
   return (
     <Navbar style={headerStyle} expand="lg">
@@ -48,8 +61,8 @@ const Header = () => {
           <Nav className="ml-auto" style={{ display: 'flex', alignItems: 'center', width: '100%' }}>
             <div>
               <Link to="/" style={navLinkStyle}><b>Home</b></Link>
-              {user.user.role === "businessOwner" && <Link to="/add-location" style={navLinkStyle}><b>Add Business</b></Link>}
-              {user.user.role === "businessOwner" && <Link to={`/my-location/${user.user._id}`} style={navLinkStyle}><b>My Business</b></Link>}
+              {user?.user.role === "businessOwner" && <Link to="/add-location" style={navLinkStyle}><b>Add Business</b></Link>}
+              {user?.user.role === "businessOwner" && <Link to={`/my-location/${user.user._id}`} style={navLinkStyle}><b>My Business</b></Link>}
             </div>
             {!isAuthenticated ? (
               <>
@@ -58,6 +71,16 @@ const Header = () => {
               </>
             ) : (
               <div style={logoutButtonStyle}>
+                <Image
+                  src={user?.user?.profilePictureURL || defaultAvatar}
+                  alt="User Avatar"
+                  style={avatarStyle}
+                  roundedCircle
+                  onClick={handleProfileClick}
+                />
+                <span onClick={handleProfileClick} style={{ color: '#ffffff', fontSize: '1.1rem', marginRight: '15px', cursor: "pointer" }}>
+                  {user.user.name}
+                </span>
                 <Button variant="outline-danger" onClick={handleLogout}>Logout</Button>
               </div>
             )}

@@ -7,9 +7,11 @@ import BusinessDetails from './pages/BusinessDetails';
 import LandingPage from './pages/LandingPage';
 import ProtectedRoute from './components/ProtectedRoute';
 import MapPage from './pages/MapPage';
+import Profile from './pages/Profile';
 import AddLocationPage from './pages/AddLocationPage';
 import { AuthContext } from './context/AuthContext';
 import { LoadScript } from '@react-google-maps/api';
+import { ToastContainer } from 'react-toastify';
 
 const AppContent = () => {
   const { isAuthenticated } = useContext(AuthContext);
@@ -21,6 +23,7 @@ const AppContent = () => {
   return (
     <>
       <LoadScript googleMapsApiKey={process.env.REACT_APP_GOOGLE_MAPS_API_KEY}>
+      <ToastContainer />
         {/* Conditionally render the Header only if the current path is not in hideHeaderPaths */}
         {isAuthenticated && !hideHeaderPaths.includes(location.pathname) && <Header />}
 
@@ -63,7 +66,14 @@ const AppContent = () => {
               </ProtectedRoute>
             }
           />
-
+          <Route
+            path="/profile"
+            element={
+              <ProtectedRoute>
+                <Profile />
+              </ProtectedRoute>
+            }
+          />
           {/* Redirect any non-matching route to the landing page */}
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
