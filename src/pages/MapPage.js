@@ -3,6 +3,8 @@ import MapComponent from '../components/MapComponent';
 import { useParams } from 'react-router-dom';
 import { fetchBusinessesByLocation, fetchBusinessesByUserId } from '../services/businessService';
 import { AuthContext } from '../context/AuthContext';
+// import { toast } from 'react-toastify';
+import { Container, Alert } from 'react-bootstrap';
 
 const MapPage = () => {
     const location = useParams();
@@ -24,13 +26,16 @@ const MapPage = () => {
                             setBusinesses(data);
                             setLoading(false);
                         },
-                        () => {
-                            setError('Unable to retrieve your location. Please provide a user ID.');
+                        async () => {
+                            // Use Worcester coordinates as default
+                            const data = await fetchBusinessesByLocation(42.2626, -71.8023, user.token);
+                            setBusinesses(data);
                             setLoading(false);
                         }
                     );
                 } else {
-                    setError('Geolocation is not supported by this browser.');
+                    const data = await fetchBusinessesByLocation(42.2626, -71.8023, user.token);
+                    setBusinesses(data);
                     setLoading(false);
                 }
             } else {
@@ -49,16 +54,26 @@ const MapPage = () => {
     }, [fetchBusinesses]);
 
     if (loading) {
-        return <div>Loading businesses...</div>;
-    }
-
-    if (error) {
-        return <div>{error}</div>;
+        return (
+            <Container className="d-flex justify-content-center align-items-center" style={{ minHeight: '200px' }}>
+                <div className="spinner-border text-primary" role="status">
+                    <span className="visually-hidden">Loading...</span>
+                </div>
+            </Container>
+        );
     }
 
     return (
         <div>
-            <MapComponent businesses={businesses} userId={location.id} fetchBusinesses={fetchBusinesses} />
+            {error ? (
+                <Container className="mt-3">
+                    <Alert variant="warning">
+                        {error}
+                    </Alert>
+                </Container>
+            ) : (
+                <MapComponent businesses={businesses} userId={location.id} fetchBusinesses={fetchBusinesses} />
+            )}
         </div>
     );
 };

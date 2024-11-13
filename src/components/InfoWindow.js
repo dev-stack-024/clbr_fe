@@ -5,9 +5,11 @@ import { FaStar } from 'react-icons/fa';
 import axios from 'axios';
 import { AuthContext } from '../context/AuthContext';
 import defaultProfilePictureUrl from "../assets/defaultAvatar.jpg"
+import { useLocation } from 'react-router-dom';
 
 const InfoWindowContent = ({ selectedBusiness, fetchBusinesses }) => {
     const { user } = useContext(AuthContext);
+    const location = useLocation();
     const [hover, setHover] = useState(0);
     const [businesses, setBusinesses] = useState(selectedBusiness);
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -192,7 +194,7 @@ const InfoWindowContent = ({ selectedBusiness, fetchBusinesses }) => {
                             </span>
                         </div>
                     </Col>
-                    <Col md={6}>
+                    {!location.pathname.includes('my-location') && <Col md={6}>
                         <p style={styles.label}>Your Rating</p>
                         <div className="d-flex align-items-center">
                             {[1, 2, 3, 4, 5].map((star) => (
@@ -208,11 +210,11 @@ const InfoWindowContent = ({ selectedBusiness, fetchBusinesses }) => {
                                 />
                             ))}
                         </div>
-                    </Col>
+                    </Col>}
                 </Row>
 
                 {/* Add Review Section */}
-                <div className="mb-4">
+                {!location.pathname.includes('my-location') && <div className="mb-4">
                     <h3 style={styles.sectionHeading}>Add a Review</h3>
                     <Form.Group className="mb-3">
                         <Form.Control
@@ -232,7 +234,7 @@ const InfoWindowContent = ({ selectedBusiness, fetchBusinesses }) => {
                     >
                         {isSubmitting ? "Submitting..." : "Submit Review"}
                     </Button>
-                </div>
+                </div>}
 
                 {/* Reviews Section */}
                 <div>

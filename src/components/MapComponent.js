@@ -3,12 +3,17 @@ import React, { useEffect, useState } from 'react';
 import { GoogleMap, MarkerF } from '@react-google-maps/api';
 import InfoWindowContent from './InfoWindow';
 import { Offcanvas } from 'react-bootstrap';
+import { useLocation } from 'react-router-dom';
 
 const MapComponent = ({ businesses, userId, fetchBusinesses }) => {
     // Set a default location as an initial state
-    const [currentLocation, setCurrentLocation] = useState({});
+    const [currentLocation, setCurrentLocation] = useState({
+        lat: 42.2626,
+        lng: -71.8023
+    });
     const [selectedBusiness, setSelectedBusiness] = useState(null);
     const [drawerOpen, setDrawerOpen] = useState(false);
+    const location = useLocation();
 
     const handleMarkerClick = (business) => {
         setSelectedBusiness(business);
@@ -21,10 +26,11 @@ const MapComponent = ({ businesses, userId, fetchBusinesses }) => {
     };
 
     useEffect(() => {
-        console.log(currentLocation, "currentLocation")
         if (userId) {
-            setCurrentLocation({ lat: Number(businesses[0].location.coordinates[1]), lng: Number(businesses[0].location.coordinates[0]) });
-
+            setCurrentLocation({
+                lat: Number(businesses[0].location.coordinates[1]),
+                lng: Number(businesses[0].location.coordinates[0])
+            });
         } else if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(
                 (position) => {
@@ -32,13 +38,10 @@ const MapComponent = ({ businesses, userId, fetchBusinesses }) => {
                     setCurrentLocation({ lat: latitude, lng: longitude });
                 },
                 () => {
-                    console.error('Geolocation service failed.');
-                    // Maintain default location if geolocation fails
+                    // Keep Worcester coordinates from initial state if geolocation fails
+                    console.log('Using default Worcester coordinates');
                 }
             );
-        } else {
-            console.error('Geolocation is not supported by this browser.');
-            // Maintain default location if geolocation is not supported
         }
     }, []);
 
@@ -68,7 +71,7 @@ const MapComponent = ({ businesses, userId, fetchBusinesses }) => {
                         />
                     </>
                 ))}
-                <MarkerF position={currentLocation} icon={{ url: 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png' }} />
+                {!location.pathname.includes('my-location') && <MarkerF position={currentLocation} icon={{ url: 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png' }} />}
             </GoogleMap>
 
             <Offcanvas show={drawerOpen} onHide={handleDrawerClose} placement="end" style={{ width: '40%' }}>
