@@ -58,13 +58,13 @@ const AddLocationComp = ({ businesses }) => {
                     setCurrentLocation({ lat: latitude, lng: longitude });
                 },
                 () => {
-                    console.error('Geolocation service failed.');
-                    setCurrentLocation({ lat: 37.7749, lng: -122.4194 });
+                    // Set Worcester coordinates when geolocation fails
+                    setCurrentLocation({ lat: 42.2626, lng: -71.8023 });
                 }
             );
         } else {
-            console.error('Geolocation is not supported by this browser.');
-            setCurrentLocation({ lat: 37.7749, lng: -122.4194 });
+            // Set Worcester coordinates when geolocation not supported
+            setCurrentLocation({ lat: 42.2626, lng: -71.8023 });
         }
     }, []);
 

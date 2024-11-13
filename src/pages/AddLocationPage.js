@@ -16,24 +16,26 @@ const AddLocationPage = () => {
             try {
                 const userId = location.id;
 
-                // If user ID is not provided, fetch businesses based on the current location
                 if (!userId) {
                     if (navigator.geolocation) {
                         navigator.geolocation.getCurrentPosition(
                             async (position) => {
                                 const { latitude, longitude } = position.coords;
                                 const data = await fetchBusinessesByLocation(latitude, longitude, user.token);
-                                console.log(data)
                                 setBusinesses(data);
                                 setLoading(false);
                             },
-                            () => {
-                                setError('Unable to retrieve your location. Please provide a user ID.');
+                            async () => {
+                                // Use Worcester coordinates when geolocation fails
+                                const data = await fetchBusinessesByLocation(42.2626, -71.8023, user.token);
+                                setBusinesses(data);
                                 setLoading(false);
                             }
                         );
                     } else {
-                        setError('Geolocation is not supported by this browser.');
+                        // Use Worcester coordinates when geolocation not supported
+                        const data = await fetchBusinessesByLocation(42.2626, -71.8023, user.token);
+                        setBusinesses(data);
                         setLoading(false);
                     }
                 } else {
