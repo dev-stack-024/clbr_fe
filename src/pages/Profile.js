@@ -63,7 +63,7 @@ const Profile = () => {
             // toast.success("Profile updated successfully.");
         } catch (error) {
             console.error('Error updating profile:', error);
-            toast.error("Failed to update profile.");
+            // toast.error("Failed to update profile.");
         }
     };
 

@@ -109,7 +109,7 @@ const AddLocationComp = ({ businesses }) => {
             const createdBusiness = await createBusiness(updatedFormData, token);
             console.log('Business created:', createdBusiness);
 
-            toast.success("Business added successfully.")
+            // toast.success("Business added successfully.")
 
             setFormData({
                 name: '',
@@ -125,7 +125,7 @@ const AddLocationComp = ({ businesses }) => {
             setShowModal(false);
         } catch (error) {
             console.error('Error creating business:', error.message);
-            toast.error("Business adding failed")
+            // toast.error("Business adding failed")
         }
     };
 
