@@ -59,7 +59,7 @@ const Header = () => {
   return (
     <Navbar style={headerStyle} expand="lg">
       <Container>
-        <Navbar.Brand style={brandStyle} href="/">Local Reviews</Navbar.Brand>
+        {/* <Navbar.Brand style={brandStyle} href="/">Local Reviews</Navbar.Brand> */}
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="ml-auto" style={{ display: 'flex', alignItems: 'center', width: '100%' }}>
