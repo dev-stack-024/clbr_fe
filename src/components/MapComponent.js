@@ -5,7 +5,7 @@ import InfoWindowContent from './InfoWindow';
 import { Offcanvas } from 'react-bootstrap';
 import { useLocation } from 'react-router-dom';
 
-const MapComponent = ({ businesses, userId, fetchBusinesses }) => {
+const MapComponent = ({ businesses, userId }) => {
     // Set a default location as an initial state
     const [currentLocation, setCurrentLocation] = useState({
         lat: 42.2626,
@@ -80,7 +80,7 @@ const MapComponent = ({ businesses, userId, fetchBusinesses }) => {
                 </Offcanvas.Header>
                 <Offcanvas.Body>
                     {selectedBusiness && (
-                        <InfoWindowContent selectedBusiness={selectedBusiness} fetchBusinesses={fetchBusinesses} />
+                        <InfoWindowContent selectedBusiness={selectedBusiness} />
                     )}
                 </Offcanvas.Body>
             </Offcanvas>

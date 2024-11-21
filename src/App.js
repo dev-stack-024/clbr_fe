@@ -12,18 +12,22 @@ import AddLocationPage from './pages/AddLocationPage';
 import { AuthContext } from './context/AuthContext';
 import { LoadScript } from '@react-google-maps/api';
 import { ToastContainer } from 'react-toastify';
+import AdminLayout from './components/AdminLayout';
+import Users from './pages/admin/Users';
+import Businesses from './pages/admin/Businesses';
+import AdminMap from './pages/admin/AdminMap';
 
 const AppContent = () => {
   const { isAuthenticated } = useContext(AuthContext);
   const location = useLocation(); // Hook to get the current location
 
   // Paths where Header should not be displayed
-  const hideHeaderPaths = ['/', '/login', '/register'];
+  const hideHeaderPaths = ['/', '/login', '/register', '/admin', '/admin/*'];
 
   return (
     <>
       <LoadScript googleMapsApiKey={process.env.REACT_APP_GOOGLE_MAPS_API_KEY}>
-      <ToastContainer />
+        <ToastContainer />
         {/* Conditionally render the Header only if the current path is not in hideHeaderPaths */}
         {isAuthenticated && !hideHeaderPaths.includes(location.pathname) && <Header />}
 
@@ -74,6 +78,20 @@ const AppContent = () => {
               </ProtectedRoute>
             }
           />
+
+          <Route
+            path="/admin"
+            element={
+              <ProtectedRoute>
+                <AdminLayout />
+              </ProtectedRoute>
+            }
+          >
+            <Route path="users" element={<Users />} />
+            <Route path="businesses" element={<Businesses />} />
+            <Route path="map" element={<AdminMap />} />
+            <Route index element={<Navigate to="users" replace />} />
+          </Route>
           {/* Redirect any non-matching route to the landing page */}
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>

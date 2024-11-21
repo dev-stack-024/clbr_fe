@@ -6,20 +6,36 @@ import axios from 'axios';
 import { AuthContext } from '../context/AuthContext';
 import defaultProfilePictureUrl from "../assets/defaultAvatar.jpg"
 import { useLocation } from 'react-router-dom';
+import { fetchBusinessesById } from '../services/businessService';
 
-const InfoWindowContent = ({ selectedBusiness, fetchBusinesses }) => {
+const InfoWindowContent = ({ selectedBusiness }) => {
     const { user } = useContext(AuthContext);
     const location = useLocation();
     const [hover, setHover] = useState(0);
-    const [businesses, setBusinesses] = useState(selectedBusiness);
-    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [business, setBusiness] = useState([]);
+    const [loading, setLoading] = useState(false);
     const [reviews, setReviews] = useState([]);
     const [newReviewText, setNewReviewText] = useState('');
 
     useEffect(() => {
-        setBusinesses(selectedBusiness);
+        getBusinessById()
         fetchReviews();
-    }, [selectedBusiness]);
+    }, []);
+
+
+    const getBusinessById = async () => {
+        setLoading(true);
+        try {
+            const response = await fetchBusinessesById(selectedBusiness._id, user.token);
+            console.log(response, "res")
+            setBusiness(response);
+        } catch (error) {
+            console.error("Error fetching business:", error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
 
     const fetchReviews = async () => {
         try {
@@ -35,11 +51,12 @@ const InfoWindowContent = ({ selectedBusiness, fetchBusinesses }) => {
         }
     };
 
+
     const handleAddReview = async () => {
-        setIsSubmitting(true);
+        setLoading(true);
         try {
             const response = await axios.post('http://localhost:8080/api/reviews/add-review', {
-                businessId: businesses._id,
+                businessId: business._id,
                 reviewText: newReviewText
             }, {
                 headers: {
@@ -49,18 +66,19 @@ const InfoWindowContent = ({ selectedBusiness, fetchBusinesses }) => {
             });
             setReviews([...reviews, response.data.review]);
             setNewReviewText('');
+            await fetchReviews();
         } catch (error) {
             console.error("Error adding review:", error);
         } finally {
-            setIsSubmitting(false);
+            setLoading(false);
         }
     };
 
     const handleRatingSubmit = async (selectedRating) => {
-        setIsSubmitting(true);
+        setLoading(true);
         try {
             await axios.post('http://localhost:8080/api/rate/business', {
-                businessId: businesses._id,
+                businessId: business._id,
                 rating: selectedRating,
             }, {
                 headers: {
@@ -68,15 +86,20 @@ const InfoWindowContent = ({ selectedBusiness, fetchBusinesses }) => {
                     'Content-Type': 'application/json',
                 },
             });
-            fetchBusinesses();
-            selectedBusiness.rating = selectedRating
-            fetchReviews();
+
+            setBusiness(prev => ({
+                ...prev,
+                rating: selectedRating,
+                ownRating: selectedRating
+            }));
+            await getBusinessById();
         } catch (error) {
             console.error("Error submitting rating:", error);
         } finally {
-            setIsSubmitting(false);
+            setLoading(false);
         }
     };
+
 
     const styles = {
         card: {
@@ -135,135 +158,144 @@ const InfoWindowContent = ({ selectedBusiness, fetchBusinesses }) => {
         }
     };
 
+    console.log();
+
     return (
-        <Card style={styles.card}>
-            <Card.Body className="p-4">
-                {/* Business Name */}
-                <h2 style={styles.heading}>{businesses.name}</h2>
+        <>
 
-                {/* Images */}
-                <Row className="mb-4">
-                    {businesses.images && businesses.images.length > 0 ? (
-                        businesses.images.map((imageUrl, index) => (
-                            <Col key={index} xs={6}>
-                                <img
-                                    src={imageUrl}
-                                    alt={`${businesses.name} ${index + 1}`}
-                                    style={styles.image}
-                                />
-                            </Col>
-                        ))
-                    ) : (
-                        <Col>
-                            <p style={styles.text}>No images available</p>
-                        </Col>
-                    )}
-                </Row>
+            <Card style={styles.card}>
+                <Card.Body className="p-4">
 
-                {/* Description */}
-                <div className="mb-4">
-                    <p style={styles.text}>{businesses.description}</p>
-                </div>
+                    <h2 style={styles.heading}>{business.name}</h2>
 
-                {/* Location Details */}
-                <div className="mb-4">
-                    <p style={styles.text}>
-                        <span style={styles.label}>Address:</span> {businesses.address}
-                    </p>
-                    <p style={styles.text}>
-                        <span style={styles.label}>Coordinates:</span> ({businesses.location.coordinates[1]}, {businesses.location.coordinates[0]})
-                    </p>
-                </div>
 
-                {/* Ratings Section */}
-                <Row className="mb-4">
-                    <Col md={6}>
-                        <p style={styles.label}>Average Rating</p>
-                        <div className="d-flex align-items-center">
-                            {[1, 2, 3, 4, 5].map((star) => (
-                                <FaStar
-                                    key={star}
-                                    style={{
-                                        ...styles.star,
-                                        ...(star <= businesses.averageRating ? styles.filledStar : styles.emptyStar)
-                                    }}
-                                />
-                            ))}
-                            <span style={styles.text} className="ms-2">
-                                ({businesses?.averageRating?.toFixed(1)})
-                            </span>
-                        </div>
-                    </Col>
-                    {!location.pathname.includes('my-location') && <Col md={6}>
-                        <p style={styles.label}>Your Rating</p>
-                        <div className="d-flex align-items-center">
-                            {[1, 2, 3, 4, 5].map((star) => (
-                                <FaStar
-                                    key={star}
-                                    style={{
-                                        ...styles.star,
-                                        ...(star <= (hover || businesses.ownRating) ? styles.filledStar : styles.emptyStar)
-                                    }}
-                                    onMouseEnter={() => setHover(star)}
-                                    onMouseLeave={() => setHover(0)}
-                                    onClick={() => !isSubmitting && handleRatingSubmit(star)}
-                                />
-                            ))}
-                        </div>
-                    </Col>}
-                </Row>
-
-                {/* Add Review Section */}
-                {!location.pathname.includes('my-location') && <div className="mb-4">
-                    <h3 style={styles.sectionHeading}>Add a Review</h3>
-                    <Form.Group className="mb-3">
-                        <Form.Control
-                            as="textarea"
-                            rows={3}
-                            placeholder="Write your review here..."
-                            value={newReviewText}
-                            onChange={(e) => setNewReviewText(e.target.value)}
-                            style={styles.text}
-                        />
-                    </Form.Group>
-                    <Button
-                        variant="primary"
-                        onClick={handleAddReview}
-                        disabled={isSubmitting}
-                        className="w-100"
-                    >
-                        {isSubmitting ? "Submitting..." : "Submit Review"}
-                    </Button>
-                </div>}
-
-                {/* Reviews Section */}
-                <div>
-                    <h3 style={styles.sectionHeading}>Reviews</h3>
-                    {reviews.length > 0 ? (
-                        reviews.map((review, index) => (
-                            <Card key={index} style={styles.reviewCard}>
-                                <Card.Body style={{ display: 'flex', alignItems: 'center' }}>
-                                    <Image
-                                        src={review.user.profilePictureURL || defaultProfilePictureUrl}
-                                        roundedCircle
-                                        width={30} // Adjust size as needed
-                                        height={30}
-                                        alt="User Profile"
-                                        style={{ marginRight: '10px' }}
+                    <Row className="mb-4">
+                        {business.images && business.images.length > 0 ? (
+                            business.images.map((imageUrl, index) => (
+                                <Col key={index} xs={6}>
+                                    <img
+                                        src={imageUrl}
+                                        alt={`${business.name} ${index + 1}`}
+                                        style={styles.image}
                                     />
-                                    <div>
-                                        <p style={styles.label}>{review.user.name}</p>
-                                        <p style={styles.text}>{review.reviewText}</p>
-                                    </div>
-                                </Card.Body>
-                            </Card>
-                        ))
-                    ) : (
-                        <p style={styles.text}>No reviews available</p>
-                    )}
-                </div>
-            </Card.Body>
-        </Card>
+                                </Col>
+                            ))
+                        ) : (
+                            <Col>
+                                <p style={styles.text}>No images available</p>
+                            </Col>
+                        )}
+                    </Row>
+
+
+                    <div className="mb-4">
+                        <p style={styles.text}>{business.description}</p>
+                    </div>
+
+
+                    <div className="mb-4">
+                        <p style={styles.text}>
+                            <span style={styles.label}>Address:</span> {business.address}
+                        </p>
+                        <p style={styles.text}>
+                            <span style={styles.label}>Coordinates:</span> ({business.location?.coordinates[1]}, {business.location?.coordinates[0]})
+                        </p>
+                    </div>
+
+                    {loading && business ? <>Loading...</> :
+                        <Row className="mb-4">
+                            <Col md={6}>
+                                <p style={styles.label}>Average Rating</p>
+                                <div className="d-flex align-items-center">
+                                    {[1, 2, 3, 4, 5].map((star) => (
+                                        <FaStar
+                                            key={star}
+                                            style={{
+                                                ...styles.star,
+                                                ...(star <= business.averageRating ? styles.filledStar : styles.emptyStar)
+                                            }}
+                                        />
+                                    ))}
+                                    <span style={styles.text} className="ms-2">
+                                        ({business?.averageRating?.toFixed(1)})
+                                    </span>
+                                </div>
+                            </Col>
+                            {!location.pathname.includes('my-location') && <Col md={6}>
+                                <p style={styles.label}>Your Rating</p>
+                                <div className="d-flex align-items-center">
+                                    {[1, 2, 3, 4, 5].map((star) => (
+                                        <FaStar
+                                            key={star}
+                                            style={{
+                                                ...styles.star,
+                                                ...(star <= (hover || business.ownRating) ? styles.filledStar : styles.emptyStar)
+                                            }}
+                                            onMouseEnter={() => setHover(star)}
+                                            onMouseLeave={() => setHover(0)}
+                                            onClick={() => !loading && handleRatingSubmit(star)}
+                                        />
+                                    ))}
+                                </div>
+                            </Col>}
+                        </Row>
+                    }
+
+                    {!location.pathname.includes('my-location') && <div className="mb-4">
+                        <h3 style={styles.sectionHeading}>Add a Review</h3>
+                        <Form.Group className="mb-3">
+                            <Form.Control
+                                as="textarea"
+                                rows={3}
+                                placeholder="Write your review here..."
+                                value={newReviewText}
+                                onChange={(e) => setNewReviewText(e.target.value)}
+                                style={styles.text}
+                            />
+                        </Form.Group>
+                        <Button
+                            variant="primary"
+                            onClick={handleAddReview}
+                            disabled={loading}
+                            className="w-100"
+                        >
+                            {loading ? "Submitting..." : "Submit Review"}
+                        </Button>
+                    </div>}
+
+                    {loading && business ? <>Loading...</> :
+                        <div>
+                            <h3 style={styles.sectionHeading}>Reviews</h3>
+                            {reviews.length > 0 ? (
+                                reviews.map((review, index) => (
+                                    <Card key={index} style={styles.reviewCard}>
+                                        <Card.Body style={{ display: 'flex', alignItems: 'center' }}>
+                                            <Image
+                                                src={review.user.profilePictureURL || defaultProfilePictureUrl}
+                                                roundedCircle
+                                                width={30}
+                                                height={30}
+                                                alt="User Profile"
+                                                style={{ marginRight: '10px' }}
+                                            />
+                                            <div>
+                                                <p style={styles.label}>{review.user.name}</p>
+                                                <p style={styles.text}>{review.reviewText}</p>
+                                            </div>
+                                        </Card.Body>
+                                    </Card>
+                                ))
+                            ) : (
+                                <p style={styles.text}>No reviews available</p>
+                            )}
+                        </div>
+                    }
+                </Card.Body>
+
+            </Card>
+
+
+        </>
     );
 };
 

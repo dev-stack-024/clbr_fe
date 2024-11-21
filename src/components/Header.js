@@ -65,7 +65,9 @@ const Header = () => {
           <Nav className="ml-auto" style={{ display: 'flex', alignItems: 'center', width: '100%' }}>
             <div>
               <Link to="/" style={navLinkStyle('/')}><b>Home</b></Link>
-              <Link to="/map" style={navLinkStyle('/map')}><b>Maps</b></Link>
+              {user?.user.role !== "admin" &&
+                <Link to="/map" style={navLinkStyle('/map')}><b>Maps</b></Link>
+              }
               {user?.user.role === "businessOwner" &&
                 <Link to="/add-location" style={navLinkStyle('/add-location')}><b>Add Business</b></Link>
               }

@@ -20,7 +20,12 @@ const LoginForm = () => {
     try {
       const response = await axios.post('http://localhost:8080/api/users/login', { email, password });
       login(response.data.token, response.data);
-      navigate('/map');
+      if (response.data.user.role === "admin") {
+        navigate('/admin');
+      }
+      else {
+        navigate('/map');
+      }
     } catch (err) {
       setError('Invalid credentials');
     }
@@ -102,8 +107,8 @@ const LoginForm = () => {
               </div>
               {error && <div className="alert alert-danger">{error}</div>}
               <button type="submit" className="btn btn-primary">Send OTP</button>
-              <button 
-                type="button" 
+              <button
+                type="button"
                 className="btn btn-secondary ms-2"
                 onClick={() => setShowForgotPassword(false)}
               >
@@ -201,8 +206,8 @@ const LoginForm = () => {
           </div>
           {error && <div className="alert alert-danger">{error}</div>}
           <button type="submit" className="btn btn-primary">Login</button>
-          <button 
-            type="button" 
+          <button
+            type="button"
             className="btn btn-link"
             onClick={() => setShowForgotPassword(true)}
           >

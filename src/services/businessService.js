@@ -33,6 +33,20 @@ export const fetchBusinessesByUserId = async (userId, token) => {
     }
 };
 
+export const fetchBusinessesById = async (businessId, token) => {
+    try {
+        const response = await axios.get(`http://localhost:8080/api/business/${businessId}`,
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,  // Token for authentication
+                },
+            });
+        return response.data;
+    } catch (error) {
+        throw new Error('Error fetching businesses by user ID');
+    }
+};
+
 // Function to upload images
 export const uploadImages = async (files, token) => {
     const uploadedImageUrls = [];
