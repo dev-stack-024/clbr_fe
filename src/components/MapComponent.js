@@ -4,9 +4,9 @@ import { GoogleMap, MarkerF } from '@react-google-maps/api';
 import InfoWindowContent from './InfoWindow';
 import { Offcanvas } from 'react-bootstrap';
 import { useLocation } from 'react-router-dom';
+import InfoWindowContentEdit from './InfoWindoEdit';
 
 const MapComponent = ({ businesses, userId }) => {
-    // Set a default location as an initial state
     const [currentLocation, setCurrentLocation] = useState({
         lat: 42.2626,
         lng: -71.8023
@@ -79,9 +79,12 @@ const MapComponent = ({ businesses, userId }) => {
                     <Offcanvas.Title>Business Details</Offcanvas.Title>
                 </Offcanvas.Header>
                 <Offcanvas.Body>
-                    {selectedBusiness && (
+                    {selectedBusiness && !userId ? (
                         <InfoWindowContent selectedBusiness={selectedBusiness} />
-                    )}
+                    ) : <></>}
+                    {selectedBusiness && userId ? (
+                        <InfoWindowContentEdit selectedBusiness={selectedBusiness} />
+                    ) : <></>}
                 </Offcanvas.Body>
             </Offcanvas>
         </div>

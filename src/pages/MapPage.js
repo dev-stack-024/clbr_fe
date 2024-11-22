@@ -72,7 +72,7 @@ const MapPage = () => {
                     </Alert>
                 </Container>
             ) : (
-                <MapComponent businesses={businesses} userId={location.id} fetchBusinesses={fetchBusinesses} />
+                <MapComponent businesses={businesses} userId={location.id} />
             )}
         </div>
     );

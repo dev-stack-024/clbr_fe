@@ -1,10 +1,11 @@
 import React from 'react';
+import MapPage from '../MapPage';
 
 const AdminMap = () => {
   return (
     <div>
-      <h2>Map Management</h2>
-      {/* Add map management content here */}
+      <MapPage />
+
     </div>
   );
 };

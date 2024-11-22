@@ -35,7 +35,7 @@ const Users = () => {
   };
 
   return (
-    <Container className="mt-4">
+    <Container className="mt-4 p-4">
       <h2>User Management</h2>
       {loading ? (
         <div>Loading...</div>

@@ -6,7 +6,7 @@ const AdminLayout = () => {
     <div className="d-flex">
       <div style={{
         width: '250px',
-        minHeight: '100vh',
+        minHeight: '92vh',
         backgroundColor: '#2c3e50',
         padding: '20px',
         color: 'white'
@@ -30,7 +30,7 @@ const AdminLayout = () => {
             Businesses
           </NavLink>
           <NavLink 
-            to="/map" 
+            to="/admin/map" 
             className={({ isActive }) =>
               `nav-link ${isActive ? 'active bg-success text-white shadow rounded-pill px-4' : 'text-white'}`
             }
@@ -39,7 +39,7 @@ const AdminLayout = () => {
           </NavLink>
         </nav>
       </div>
-      <div style={{ flex: 1, padding: '20px' }}>
+      <div style={{ flex: 1, padding: '0px' }}>
         <Outlet />
       </div>
     </div>
