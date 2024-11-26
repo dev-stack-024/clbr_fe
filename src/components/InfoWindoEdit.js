@@ -61,7 +61,7 @@ const InfoWindowContentEdit = ({ selectedBusiness }) => {
                 imagesToRemove
             };
             console.log(updatedData, "updatedData")
-            const response = await axios.put(`http://localhost:8080/api/business/${business._id}`, updatedData, {
+            const response = await axios.put(`${process.env.REACT_APP_BACKEND_URL}/api/business/${business._id}`, updatedData, {
                 headers: {
                     'Authorization': `Bearer ${user.token}`,
                     'Content-Type': 'application/json',
@@ -114,7 +114,7 @@ const InfoWindowContentEdit = ({ selectedBusiness }) => {
 
     const fetchReviews = async () => {
         try {
-            const response = await axios.get(`http://localhost:8080/api/reviews/${selectedBusiness._id}`, {
+            const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/reviews/${selectedBusiness._id}`, {
                 headers: {
                     'Authorization': `Bearer ${user.token}`,
                     'Content-Type': 'application/json',
@@ -188,7 +188,7 @@ const InfoWindowContentEdit = ({ selectedBusiness }) => {
 
     const handleDeleteBusiness = async () => {
         try {
-            await axios.delete(`http://localhost:8080/api/business/${business._id}`, {
+            await axios.delete(`${process.env.REACT_APP_BACKEND_URL}/api/business/${business._id}`, {
                 headers: {
                     'Authorization': `Bearer ${user.token}`,
                     'Content-Type': 'application/json',

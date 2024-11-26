@@ -15,7 +15,7 @@ const Businesses = () => {
 
   const fetchBusinesses = async (page) => {
     try {
-      const response = await axios.get(`http://localhost:8080/api/business/get-all?page=${page}&limit=10`, {
+      const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/business/get-all?page=${page}&limit=10`, {
         headers: {
           Authorization: `Bearer ${user.token}`,
         },

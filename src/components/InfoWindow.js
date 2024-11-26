@@ -39,7 +39,7 @@ const InfoWindowContent = ({ selectedBusiness }) => {
 
     const fetchReviews = async () => {
         try {
-            const response = await axios.get(`http://localhost:8080/api/reviews/${selectedBusiness._id}`, {
+            const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/reviews/${selectedBusiness._id}`, {
                 headers: {
                     'Authorization': `Bearer ${user.token}`,
                     'Content-Type': 'application/json',
@@ -55,7 +55,7 @@ const InfoWindowContent = ({ selectedBusiness }) => {
     const handleAddReview = async () => {
         setLoading(true);
         try {
-            const response = await axios.post('http://localhost:8080/api/reviews/add-review', {
+            const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/reviews/add-review`, {
                 businessId: business._id,
                 reviewText: newReviewText
             }, {
@@ -77,7 +77,7 @@ const InfoWindowContent = ({ selectedBusiness }) => {
     const handleRatingSubmit = async (selectedRating) => {
         setLoading(true);
         try {
-            await axios.post('http://localhost:8080/api/rate/business', {
+            await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/rate/business`, {
                 businessId: business._id,
                 rating: selectedRating,
             }, {

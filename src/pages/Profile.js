@@ -19,7 +19,7 @@ const Profile = () => {
     // Fetch user profile on component mount
     const fetchUserProfile = async () => {
         try {
-            const response = await axios.get('http://localhost:8080/api/users/get-profile', {
+            const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/users/get-profile`, {
                 headers: {
                     Authorization: `Bearer ${user.token}`,
                 },
@@ -50,7 +50,7 @@ const Profile = () => {
             }
 
             await axios.put(
-                'http://localhost:8080/api/users/update-profile',
+                `${process.env.REACT_APP_BACKEND_URL}/api/users/update-profile`,
                 { name, phone, gender, profilePictureURL, bio },
                 {
                     headers: {

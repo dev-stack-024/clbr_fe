@@ -5,7 +5,7 @@ import axios from 'axios';
 export const fetchBusinessesByLocation = async (latitude, longitude, token) => {
     try {
         const response = await axios.get(
-            `http://localhost:8080/api/business?latitude=${latitude}&longitude=${longitude}`,
+            `${process.env.REACT_APP_BACKEND_URL}/api/business?latitude=${latitude}&longitude=${longitude}`,
             {
                 headers: {
                     Authorization: `Bearer ${token}`, 
@@ -21,7 +21,7 @@ export const fetchBusinessesByLocation = async (latitude, longitude, token) => {
 // Fetch businesses by user ID
 export const fetchBusinessesByUserId = async (userId, token) => {
     try {
-        const response = await axios.get(`http://localhost:8080/api/business?userId=${userId}`,
+        const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/business?userId=${userId}`,
             {
                 headers: {
                     Authorization: `Bearer ${token}`,  // Token for authentication
@@ -35,7 +35,7 @@ export const fetchBusinessesByUserId = async (userId, token) => {
 
 export const fetchBusinessesById = async (businessId, token) => {
     try {
-        const response = await axios.get(`http://localhost:8080/api/business/${businessId}`,
+        const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/business/${businessId}`,
             {
                 headers: {
                     Authorization: `Bearer ${token}`,  // Token for authentication
@@ -56,7 +56,7 @@ export const uploadImages = async (files, token) => {
         imageData.append('image', file);
 
         try {
-            const response = await axios.post('http://localhost:8080/api/upload', imageData, {
+            const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/upload`, imageData, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                     'Content-Type': 'multipart/form-data',
@@ -75,7 +75,7 @@ export const uploadImages = async (files, token) => {
 export const createBusiness = async (formData, token) => {
     console.log(formData)
     try {
-        const response = await axios.post('http://localhost:8080/api/business', formData, {
+        const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/business`, formData, {
             headers: {
                 Authorization: `Bearer ${token}`,
             },

@@ -18,7 +18,9 @@ const LoginForm = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('http://localhost:8080/api/users/login', { email, password });
+      console.log(process.env.REACT_APP_GOOGLE_MAPS_API_KEY)
+      console.log(process.env.REACT_APP_BACKEND_URL)
+      const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/users/login`, { email, password });
       login(response.data.token, response.data);
       if (response.data.user.role === "admin") {
         navigate('/admin');
@@ -34,7 +36,7 @@ const LoginForm = () => {
   const handleForgotPassword = async (e) => {
     e.preventDefault();
     try {
-      await axios.post('http://localhost:8080/api/users/forgot-password', { email });
+      await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/users/forgot-password`, { email });
       setResetSuccess(true);
       setError('');
     } catch (err) {
@@ -45,7 +47,7 @@ const LoginForm = () => {
   const handleResetPassword = async (e) => {
     e.preventDefault();
     try {
-      await axios.post('http://localhost:8080/api/users/reset-password', {
+      await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/users/reset-password`, {
         email,
         otp: resetToken,
         newPassword

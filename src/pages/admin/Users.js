@@ -12,7 +12,7 @@ const Users = () => {
 
   const fetchUsers = async (page) => {
     try {
-      const response = await axios.get(`http://localhost:8080/api/users/get-all-users?page=${page}&limit=10`, {
+      const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/users/get-all-users?page=${page}&limit=10`, {
         headers: {
           Authorization: `Bearer ${user.token}`,
         },

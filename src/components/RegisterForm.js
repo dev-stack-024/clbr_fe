@@ -18,7 +18,7 @@ const RegisterForm = () => {
     e.preventDefault();
     const role = isBusinessOwner ? "businessOwner" : "user";
     try {
-      const response = await axios.post('http://localhost:8080/api/users/register', { name, email, password, role });
+      const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/users/register`, { name, email, password, role });
       setServerOtp(response.data.otp);
       setShowOtpInput(true);
     } catch (err) {
