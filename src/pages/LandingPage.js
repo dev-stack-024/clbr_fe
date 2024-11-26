@@ -6,12 +6,17 @@ import { AuthContext } from '../context/AuthContext';
 
 const LandingPage = () => {
 
-    const { isAuthenticated, user } = useContext(AuthContext); 
-    const navigate = useNavigate(); 
+    const { isAuthenticated, user } = useContext(AuthContext);
+    const navigate = useNavigate();
 
+    console.log(user)
     const handleGetStarted = () => {
         if (isAuthenticated) {
-            navigate('/map'); 
+            if (user.user.role === 'admin') {
+                navigate('/admin/map');
+            } else {
+                navigate('/map');
+            }
         } else {
             navigate('/login');
         }

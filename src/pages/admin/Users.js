@@ -46,7 +46,7 @@ const Users = () => {
               <tr>
                 <th>Name</th>
                 <th>Email</th>
-                <th>Phone</th>
+                {/* <th>Phone</th> */}
                 <th>Role</th>
                 <th>Status</th>
                 <th>Actions</th>
@@ -57,7 +57,7 @@ const Users = () => {
                 <tr key={user._id}>
                   <td>{user.name}</td>
                   <td>{user.email}</td>
-                  <td>{user.phone || 'N/A'}</td>
+                  {/* <td>{user.phone || 'N/A'}</td> */}
                   <td>
                     <Badge bg={user.role === 'admin' ? 'danger' : 'primary'}>
                       {user.role}
