@@ -2,13 +2,37 @@
 
 import axios from 'axios';
 
-export const fetchBusinessesByLocation = async (latitude, longitude, token) => {
+// export const fetchBusinessesByLocation = async (latitude, longitude, token) => {
+//     try {
+//         const response = await axios.get(
+//             `${process.env.REACT_APP_BACKEND_URL}/api/business?latitude=${latitude}&longitude=${longitude}`,
+//             {
+//                 headers: {
+//                     Authorization: `Bearer ${token}`, 
+//                 },
+//             }
+//         );
+//         return response.data;
+//     } catch (error) {
+//         throw new Error('Error fetching businesses by location');
+//     }
+// };
+
+export const fetchBusinessesByLocation = async (latitude, longitude, token, searchParams = {}) => {
     try {
+        const queryParams = new URLSearchParams({
+            latitude,
+            longitude,
+            ...searchParams,
+            page: searchParams.page || 1,
+            limit: searchParams.limit || 10
+        });
+
         const response = await axios.get(
-            `${process.env.REACT_APP_BACKEND_URL}/api/business?latitude=${latitude}&longitude=${longitude}`,
+            `${process.env.REACT_APP_BACKEND_URL}/api/business?${queryParams}`,
             {
                 headers: {
-                    Authorization: `Bearer ${token}`, 
+                    Authorization: `Bearer ${token}`,
                 },
             }
         );

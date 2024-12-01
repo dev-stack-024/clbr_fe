@@ -1,6 +1,6 @@
 
 import React, { useState, useContext, useEffect } from 'react';
-import { Row, Col, Form, Button, Card, Image } from 'react-bootstrap';
+import { Row, Col, Form, Button, Card, Image, Badge } from 'react-bootstrap';
 import { FaStar } from 'react-icons/fa';
 import axios from 'axios';
 import { AuthContext } from '../context/AuthContext';
@@ -12,7 +12,7 @@ import { uploadImages } from '../services/businessService';
 const InfoWindowContentEdit = ({ selectedBusiness }) => {
     const { user } = useContext(AuthContext);
     const location = useLocation();
-    const [business, setBusiness] = useState([]);
+    const [business, setBusiness] = useState({});
     const [loading, setLoading] = useState(false);
     const [reviews, setReviews] = useState([]);
     const [isEditing, setIsEditing] = useState(false);
@@ -22,6 +22,15 @@ const InfoWindowContentEdit = ({ selectedBusiness }) => {
         address: '',
         phone: '',
         description: '',
+        amenities: {
+            parking: false,
+            wifi: false,
+            outdoorSeating: false,
+            creditCardAccepted: false,
+            delivery: false,
+            wheelchairAccessible: false,
+            petFriendly: false
+        }
     });
     const [selectedFiles, setSelectedFiles] = useState([]);
     const [imagesToRemove, setImagesToRemove] = useState([]);
@@ -85,6 +94,15 @@ const InfoWindowContentEdit = ({ selectedBusiness }) => {
             address: business.address,
             phone: business.phone,
             description: business.description,
+            amenities: {
+                wifi: business.amenities.wifi,
+                parking: business.amenities.parking,
+                petFriendly: business.amenities.restrooms,
+                wheelchairAccessible: business.amenities.wheelchair,
+                outdoorSeating: business.amenities.pet,
+                creditCardAccepted: business.amenities.smoking,
+                delivery: business.amenities.food,
+            }
         });
         setIsEditing(true);
     };
@@ -201,21 +219,34 @@ const InfoWindowContentEdit = ({ selectedBusiness }) => {
             console.error("Error deleting business:", error);
         }
     };
+    const handleAmenityChange = (amenity, value) => {
+        setEditFormData(prev => ({
+            ...prev,
+            amenities: {
+                ...prev.amenities,
+                [amenity]: value
+            }
+        }));
+    };
+
+    console.log(business.amenities
+        , business.amenities   )
 
     return (
         <>
-
             <Card style={styles.card}>
                 <Card.Body className="p-4">
                     <div className="d-flex justify-content-between align-items-center mb-3">
                         {isEditing ? (
-                            <Form.Control
-                                type="text"
-                                name="name"
-                                value={editFormData.name}
-                                onChange={handleInputChange}
-                                style={styles.text}
-                            />
+                            <Form.Group className="">
+                                <Form.Label style={styles.label}>Name</Form.Label>
+                                <Form.Control
+                                    type="text"
+                                    name="name"
+                                    value={editFormData.name}
+                                    onChange={handleInputChange}
+                                // style={styles.text}
+                                /></Form.Group>
                         ) : (
                             <h2 style={styles.heading}>{business.name}</h2>
                         )}
@@ -224,6 +255,47 @@ const InfoWindowContentEdit = ({ selectedBusiness }) => {
 
                     {isEditing ? (
                         <Form>
+                            {isEditing && (
+                                <>
+                                    <Form.Group className="mb-3">
+                                        <Form.Label style={styles.label}>Add New Images</Form.Label>
+                                        <Form.Control
+                                            type="file"
+                                            multiple
+                                            onChange={handleFileChange}
+                                        />
+                                    </Form.Group>
+
+                                    <div className="mb-3">
+                                        <Form.Label style={styles.label}>Current Images</Form.Label>
+                                        <Row>
+                                            {business.images?.map((imageUrl, index) => (
+                                                <Col key={index} xs={6} className="mb-2">
+                                                    <div style={{ position: 'relative' }}>
+                                                        <img
+                                                            src={imageUrl}
+                                                            alt={`Business ${index + 1}`}
+                                                            style={styles.image}
+                                                        />
+                                                        <Button
+                                                            variant="danger"
+                                                            size="sm"
+                                                            style={{
+                                                                position: 'absolute',
+                                                                top: '5px',
+                                                                right: '5px'
+                                                            }}
+                                                            onClick={() => handleRemoveImage(imageUrl)}
+                                                        >
+                                                            Remove
+                                                        </Button>
+                                                    </div>
+                                                </Col>
+                                            ))}
+                                        </Row>
+                                    </div>
+                                </>
+                            )}
                             <Form.Group className="mb-3">
                                 <Form.Label style={styles.label}>Type</Form.Label>
                                 <Form.Select
@@ -267,47 +339,7 @@ const InfoWindowContentEdit = ({ selectedBusiness }) => {
                                     onChange={handleInputChange}
                                 />
                             </Form.Group>
-                            {isEditing && (
-                                <>
-                                    <Form.Group className="mb-3">
-                                        <Form.Label style={styles.label}>Add New Images</Form.Label>
-                                        <Form.Control
-                                            type="file"
-                                            multiple
-                                            onChange={handleFileChange}
-                                        />
-                                    </Form.Group>
 
-                                    <div className="mb-3">
-                                        <Form.Label style={styles.label}>Current Images</Form.Label>
-                                        <Row>
-                                            {business.images?.map((imageUrl, index) => (
-                                                <Col key={index} xs={6} className="mb-2">
-                                                    <div style={{ position: 'relative' }}>
-                                                        <img
-                                                            src={imageUrl}
-                                                            alt={`Business ${index + 1}`}
-                                                            style={styles.image}
-                                                        />
-                                                        <Button
-                                                            variant="danger"
-                                                            size="sm"
-                                                            style={{
-                                                                position: 'absolute',
-                                                                top: '5px',
-                                                                right: '5px'
-                                                            }}
-                                                            onClick={() => handleRemoveImage(imageUrl)}
-                                                        >
-                                                            Remove
-                                                        </Button>
-                                                    </div>
-                                                </Col>
-                                            ))}
-                                        </Row>
-                                    </div>
-                                </>
-                            )}
                         </Form>
                     ) : (
                         <>
@@ -396,6 +428,92 @@ const InfoWindowContentEdit = ({ selectedBusiness }) => {
                             }
                         </>
                     )}
+
+                    {/* Existing content */}
+
+                    {!isEditing ? (
+                        <div className="amenities-section mt-3">
+                            <h4 style={styles.sectionHeading}>Amenities</h4>
+                            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+                                {business?.amenities?.parking &&
+                                    <Badge bg="info"><i className="bi bi-p-square"></i> Parking</Badge>
+                                }
+                                {business?.amenities?.wifi &&
+                                    <Badge bg="info"><i className="bi bi-wifi"></i> WiFi</Badge>
+                                }
+                                {business?.amenities?.outdoorSeating &&
+                                    <Badge bg="info"><i className="bi bi-umbrella"></i> Outdoor Seating</Badge>
+                                }
+                                {business?.amenities?.creditCardAccepted &&
+                                    <Badge bg="info"><i className="bi bi-credit-card"></i> Credit Cards</Badge>
+                                }
+                                {business?.amenities?.delivery &&
+                                    <Badge bg="info"><i className="bi bi-truck"></i> Delivery</Badge>
+                                }
+                                {business?.amenities?.wheelchairAccessible &&
+                                    <Badge bg="info"><i className="bi bi-wheelchair"></i> Wheelchair Accessible</Badge>
+                                }
+                                {business?.amenities?.petFriendly &&
+                                    <Badge bg="info"><i className="bi bi-heart"></i> Pet Friendly</Badge>
+                                }
+                            </div>
+                        </div>
+                    ) : (
+                        <Form.Group className="mt-3">
+                            <Form.Label style={styles.label}>Amenities</Form.Label>
+                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+                                <Form.Check
+                                    type="switch"
+                                    id="parking"
+                                    label="Parking"
+                                    checked={editFormData.amenities?.parking}
+                                    onChange={(e) => handleAmenityChange('parking', e.target.checked)}
+                                />
+                                <Form.Check
+                                    type="switch"
+                                    id="wifi"
+                                    label="WiFi"
+                                    checked={editFormData.amenities?.wifi}
+                                    onChange={(e) => handleAmenityChange('wifi', e.target.checked)}
+                                />
+                                <Form.Check
+                                    type="switch"
+                                    id="outdoorSeating"
+                                    label="Outdoor Seating"
+                                    checked={editFormData.amenities?.outdoorSeating}
+                                    onChange={(e) => handleAmenityChange('outdoorSeating', e.target.checked)}
+                                />
+                                <Form.Check
+                                    type="switch"
+                                    id="creditCardAccepted"
+                                    label="Credit Cards"
+                                    checked={editFormData.amenities?.creditCardAccepted}
+                                    onChange={(e) => handleAmenityChange('creditCardAccepted', e.target.checked)}
+                                />
+                                <Form.Check
+                                    type="switch"
+                                    id="delivery"
+                                    label="Delivery"
+                                    checked={editFormData.amenities?.delivery}
+                                    onChange={(e) => handleAmenityChange('delivery', e.target.checked)}
+                                />
+                                <Form.Check
+                                    type="switch"
+                                    id="wheelchairAccessible"
+                                    label="Wheelchair Accessible"
+                                    checked={editFormData.amenities?.wheelchairAccessible}
+                                    onChange={(e) => handleAmenityChange('wheelchairAccessible', e.target.checked)}
+                                />
+                                <Form.Check
+                                    type="switch"
+                                    id="petFriendly"
+                                    label="Pet Friendly"
+                                    checked={editFormData.amenities?.petFriendly}
+                                    onChange={(e) => handleAmenityChange('petFriendly', e.target.checked)}
+                                />
+                            </div>
+                        </Form.Group>
+                    )}
                     {location.pathname.includes('my-location') && (
                         <div style={{ marginTop: '10px', display: 'flex', justifyContent: 'space-evenly' }}>
                             <Button
@@ -414,11 +532,7 @@ const InfoWindowContentEdit = ({ selectedBusiness }) => {
                         </div>
                     )}
                 </Card.Body>
-
-
-
             </Card>
-
 
         </>
     );
@@ -427,3 +541,4 @@ const InfoWindowContentEdit = ({ selectedBusiness }) => {
 export default InfoWindowContentEdit;
 
 // Add these new state variables at the top with other useState declarations
+

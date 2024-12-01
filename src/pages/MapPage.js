@@ -23,24 +23,24 @@ const MapPage = () => {
                         async (position) => {
                             const { latitude, longitude } = position.coords;
                             const data = await fetchBusinessesByLocation(latitude, longitude, user.token);
-                            setBusinesses(data);
+                            setBusinesses(data.businesses);
                             setLoading(false);
                         },
                         async () => {
                             // Use Worcester coordinates as default
                             const data = await fetchBusinessesByLocation(42.2626, -71.8023, user.token);
-                            setBusinesses(data);
+                            setBusinesses(data.businesses);
                             setLoading(false);
                         }
                     );
                 } else {
                     const data = await fetchBusinessesByLocation(42.2626, -71.8023, user.token);
-                    setBusinesses(data);
+                    setBusinesses(data.businesses);
                     setLoading(false);
                 }
             } else {
                 const data = await fetchBusinessesByUserId(userId, user.token);
-                setBusinesses(data);
+                setBusinesses(data.businesses);
                 setLoading(false);
             }
         } catch (err) {

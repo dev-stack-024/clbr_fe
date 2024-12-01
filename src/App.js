@@ -16,6 +16,7 @@ import AdminLayout from './components/AdminLayout';
 import Users from './pages/admin/Users';
 import Businesses from './pages/admin/Businesses';
 import AdminMap from './pages/admin/AdminMap';
+import Map from './pages/Map';
 
 const AppContent = () => {
   const { isAuthenticated } = useContext(AuthContext);
@@ -42,7 +43,7 @@ const AppContent = () => {
             path="/map"
             element={
               <ProtectedRoute>
-                <MapPage />
+                <Map />
               </ProtectedRoute>
             }
           />
