@@ -416,9 +416,9 @@ const InfoWindowContentEdit = ({ selectedBusiness }) => {
                                     {reviews.length > 0 ? (
                                         reviews.map((review, index) => (
                                             <div key={index} style={styles.reviewCard}>
-                                                <div style={{ display: 'flex', alignItems: 'center' }}>
+                                                <div style={{ display: 'flex', alignItems: 'center', marginLeft: "10px", paddingTop: "8px" }}>
                                                     <Image
-                                                        src={review?.userDetails?.profilePictureURL || defaultProfilePictureUrl}
+                                                        src={review.userDetails.profilePictureURL || defaultProfilePictureUrl}
                                                         roundedCircle
                                                         width={30}
                                                         height={30}
@@ -428,6 +428,17 @@ const InfoWindowContentEdit = ({ selectedBusiness }) => {
                                                     <div>
                                                         <p style={styles.label}>{review.userDetails.name}</p>
                                                         <p style={styles.text}>{review.reviewText}</p>
+                                                        <div className="d-flex align-items-center" style={{ marginBlock: "-12px 8px" }}>
+                                                            {[1, 2, 3, 4, 5].map((star) => (
+                                                                <FaStar
+                                                                    key={star}
+                                                                    style={{
+                                                                        fontSize: '12px',
+                                                                        color: star <= review.rating ? '#ffc107' : '#e4e5e9'
+                                                                    }}
+                                                                />
+                                                            ))}
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
