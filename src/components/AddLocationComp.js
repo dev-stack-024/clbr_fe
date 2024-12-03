@@ -117,7 +117,7 @@ const AddLocationComp = ({ businesses }) => {
                 amenities: amenities
             };
 
-            console.log(formData)
+            console.log(updatedFormData, "updatedFormData")
 
             // Create business
             const createdBusiness = await createBusiness(updatedFormData, token);
@@ -137,12 +137,14 @@ const AddLocationComp = ({ businesses }) => {
             });
             // setClickedLocation(null);
             setShowModal(false);
-            navigate(`/my-location/${user.id}`);
+            navigate(`/my-location/${user.user._id}`);
         } catch (error) {
             console.error('Error creating business:', error.message);
             // toast.error("Business adding failed")
         }
     };
+
+    // console.log(user)
 
     return (
         <div>
