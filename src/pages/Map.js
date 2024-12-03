@@ -239,7 +239,7 @@ const Map = () => {
                                                             borderRadius: '8px'
                                                         }}
                                                     />
-                                                    <span className="text-warning" style={{ fontSize: '20px' }}>
+                                                    <span className="text-warning" style={{ fontSize: '15px' }}>
                                                         {'★'.repeat(Math.round(business.averageRating || 0))}
                                                     </span>
                                                 </div>
