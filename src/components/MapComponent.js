@@ -8,7 +8,7 @@ import InfoWindowContentEdit from './InfoWindoEdit';
 import "../styles/Map.css"
 import df from '../assets/marker.png'
 
-const MapComponent = ({ businesses, userId }) => {
+const MapComponent = ({ businesses, userId, preSelectedBusiness = null }) => {
     const [currentLocation, setCurrentLocation] = useState({
         lat: 42.2626,
         lng: -71.8023
@@ -18,16 +18,21 @@ const MapComponent = ({ businesses, userId }) => {
     const location = useLocation();
 
     const handleMarkerClick = (business) => {
-
-
         setSelectedBusiness(business);
         setDrawerOpen(true);
     };
+
+    useEffect(() => {
+        setSelectedBusiness(preSelectedBusiness);
+        preSelectedBusiness !== null && setDrawerOpen(true);
+    }, [preSelectedBusiness])
 
     const handleDrawerClose = () => {
         setSelectedBusiness(null);
         setDrawerOpen(false);
     };
+
+    console.log(preSelectedBusiness, "vvv")
 
     useEffect(() => {
         if (userId && businesses.length > 0) {
@@ -74,8 +79,7 @@ const MapComponent = ({ businesses, userId }) => {
                                 text: `${business.averageRating.toFixed(1) + " " + business.name}`,
                                 className: 'marker-label',
                                 color: '#FFD700',
-                                fontSize: '14px',
-                                fontWeight: 'bold'
+                                fontSize: '12px',
                             }}
                         />
 
@@ -92,7 +96,7 @@ const MapComponent = ({ businesses, userId }) => {
                     <Offcanvas.Title>Business Details</Offcanvas.Title>
                 </Offcanvas.Header>
                 <Offcanvas.Body>
-                    {selectedBusiness && !userId ? (
+                    {selectedBusiness !== null && !userId ? (
                         <InfoWindowContent selectedBusiness={selectedBusiness} />
                     ) : <></>}
                     {selectedBusiness && userId ? (

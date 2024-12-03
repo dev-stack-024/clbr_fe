@@ -72,7 +72,7 @@ const Header = () => {
                 <Link to="/add-location" style={navLinkStyle('/add-location')}><b>Add Business</b></Link>
               }
               {user?.user.role === "businessOwner" &&
-                <Link to={`/my-location/${user.user._id}`} style={navLinkStyle(`/my-location/${user.user._id}`)}><b>My Business</b></Link>
+                <Link to={`/my-location/${user.user._id}`} style={navLinkStyle(`/my-location/${user.user._id}`)}><b>Manage My Business</b></Link>
               }
             </div>
             {!isAuthenticated ? (

@@ -415,10 +415,10 @@ const InfoWindowContentEdit = ({ selectedBusiness }) => {
                                     <h3 style={styles.sectionHeading}>Reviews</h3>
                                     {reviews.length > 0 ? (
                                         reviews.map((review, index) => (
-                                            <Card key={index} style={styles.reviewCard}>
-                                                <Card.Body style={{ display: 'flex', alignItems: 'center' }}>
+                                            <div key={index} style={styles.reviewCard}>
+                                                <div style={{ display: 'flex', alignItems: 'center' }}>
                                                     <Image
-                                                        src={review.user.profilePictureURL || defaultProfilePictureUrl}
+                                                        src={review?.userDetails?.profilePictureURL || defaultProfilePictureUrl}
                                                         roundedCircle
                                                         width={30}
                                                         height={30}
@@ -426,11 +426,11 @@ const InfoWindowContentEdit = ({ selectedBusiness }) => {
                                                         style={{ marginRight: '10px' }}
                                                     />
                                                     <div>
-                                                        <p style={styles.label}>{review.user.name}</p>
+                                                        <p style={styles.label}>{review.userDetails.name}</p>
                                                         <p style={styles.text}>{review.reviewText}</p>
                                                     </div>
-                                                </Card.Body>
-                                            </Card>
+                                                </div>
+                                            </div>
                                         ))
                                     ) : (
                                         <p style={styles.text}>No reviews available</p>

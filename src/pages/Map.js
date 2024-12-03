@@ -32,6 +32,8 @@ const Map = () => {
         longitude: -71.8023
     });
 
+    const [preSelectedBusiness, setPreSelectedBusiness] = useState(null);
+
     useEffect(() => {
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(
@@ -116,7 +118,7 @@ const Map = () => {
                 <div style={{ display: 'flex', height: '100%' }}>
                     <div className="business-cards-container" style={{
                         flex: '0 0 320px',
-                        padding: '20px',
+                        padding: '10px 10px',
                         backgroundColor: '#f8f9fa',
                         boxShadow: '2px 0 5px rgba(0,0,0,0.1)',
                         overflowY: 'auto',
@@ -177,7 +179,7 @@ const Map = () => {
                             <option value="newest">Newest</option>
                         </Form.Select>
 
-                        <div className="filter-badges mb-3">
+                        <div className="filter-badges mb-3" style={{ marginLeft: '10px' }}>
                             {renderFilterBadges()}
                         </div>
 
@@ -209,34 +211,48 @@ const Map = () => {
                                         className="card mb-3 hover-shadow"
                                         style={{
                                             borderRadius: '8px',
-                                            transition: 'all 0.3s ease'
+                                            paddingBottom: '-10px',
+                                            transition: 'all 0.3s ease',
+                                            cursor: "pointer",
+                                            boxShadow: "0 2px 4px rgba(0,0,0,0.05)",
+                                            ":hover": {
+                                                boxShadow: "0 8px 16px rgba(0,0,0,0.1)",
+                                                transform: "translateY(-2px)"
+                                            }
                                         }}
+                                        onClick={() => setPreSelectedBusiness(business)}
                                     >
-                                        <div className="card-body pb-0">
-                                            <div className="d-flex mb-3">
-                                                <img
-                                                    src={business.images[0] || '/assets/default-business.jpg'}
-                                                    alt={business.name}
-                                                    className="business-card-image me-3"
-                                                    style={{
-                                                        width: '80px',
-                                                        height: '80px',
-                                                        objectFit: 'cover',
-                                                        borderRadius: '8px'
-                                                    }}
-                                                />
+                                        <div className="card-body pb-0" >
+                                            <div className="d-flex mb-3" style={{
+                                                paddingBottom: "0px",
+
+                                            }} >
+                                                <div style={{ display: "flex", flexDirection: "column" }}>
+                                                    <img
+                                                        src={business.images[0] || '/assets/default-business.jpg'}
+                                                        alt={business.name}
+                                                        className="me-3"
+                                                        style={{
+                                                            width: '80px',
+                                                            height: '80px',
+                                                            objectFit: 'cover',
+                                                            borderRadius: '8px'
+                                                        }}
+                                                    />
+                                                    <span className="text-warning" style={{ fontSize: '20px' }}>
+                                                        {'★'.repeat(Math.round(business.averageRating || 0))}
+                                                    </span>
+                                                </div>
                                                 <div>
-                                                    <p className="card-title"><b>{business.name}</b></p>
-                                                    <p className="card-text text-muted mb-2">
+                                                    <p style={{ marginBlock: "0px" }}><b>{business.name}</b></p>
+                                                    <p className="mb-1" style={{ fontSize: '12px', marginTop: "0px" }}>
                                                         {business.address}
                                                     </p>
                                                     <div className="d-flex justify-content-between align-items-center">
                                                         <Badge bg="secondary">
                                                             {business.type}
                                                         </Badge>
-                                                        <span className="text-warning">
-                                                            {'★'.repeat(Math.round(business.averageRating || 0))}
-                                                        </span>
+
                                                     </div>
                                                 </div>
                                             </div>
@@ -262,7 +278,7 @@ const Map = () => {
                     </div>
 
                     <div style={{ flex: 1 }}>
-                        <MapComponent businesses={businesses} userId={location.id} />
+                        <MapComponent businesses={businesses} userId={location.id} preSelectedBusiness={preSelectedBusiness} />
                     </div>
                 </div>
             )}

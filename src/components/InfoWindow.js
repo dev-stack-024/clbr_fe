@@ -125,7 +125,7 @@ const InfoWindowContent = ({ selectedBusiness }) => {
         text: {
             fontSize: '14px',
             color: '#666666',
-            lineHeight: '1'
+            lineHeight: '1.5'
         },
         label: {
             fontSize: '14px',
@@ -162,139 +162,150 @@ const InfoWindowContent = ({ selectedBusiness }) => {
 
     return (
         <>
+            {!loading ? (
+                <Card style={styles.card}>
+                    <Card.Body className="p-4">
 
-            <Card style={styles.card}>
-                <Card.Body className="p-4">
-
-                    <h2 style={styles.heading}>{business.name}</h2>
-
-
-                    <Row className="mb-4">
-                        {business.images && business.images.length > 0 ? (
-                            business.images.map((imageUrl, index) => (
-                                <Col key={index} xs={6}>
-                                    <img
-                                        src={imageUrl}
-                                        alt={`${business.name} ${index + 1}`}
-                                        style={styles.image}
-                                    />
-                                </Col>
-                            ))
-                        ) : (
-                            <Col>
-                                <p style={styles.text}>No images available</p>
-                            </Col>
-                        )}
-                    </Row>
+                        <h2 style={styles.heading}>{business.name}</h2>
 
 
-                    <div className="mb-4">
-                        <p style={styles.text}>{business.description}</p>
-                    </div>
-
-
-                    <div className="mb-4">
-                        <p style={styles.text}>
-                            <span style={styles.label}>Address:</span> {business.address}
-                        </p>
-                        <p style={styles.text}>
-                            <span style={styles.label}>Coordinates:</span> ({business.location?.coordinates[1]}, {business.location?.coordinates[0]})
-                        </p>
-                    </div>
-
-                    {loading && business ? <>Loading...</> :
                         <Row className="mb-4">
-                            <Col md={6}>
-                                <p style={styles.label}>Average Rating</p>
-                                <div className="d-flex align-items-center">
-                                    {[1, 2, 3, 4, 5].map((star) => (
-                                        <FaStar
-                                            key={star}
-                                            style={{
-                                                ...styles.star,
-                                                ...(star <= business.averageRating ? styles.filledStar : styles.emptyStar)
-                                            }}
+                            {business.images && business.images.length > 0 ? (
+                                business.images.map((imageUrl, index) => (
+                                    <Col key={index} xs={6}>
+                                        <img
+                                            src={imageUrl}
+                                            alt={`${business.name} ${index + 1}`}
+                                            style={styles.image}
                                         />
-                                    ))}
-                                    <span style={styles.text} className="ms-2">
-                                        ({business?.averageRating?.toFixed(1)})
-                                    </span>
-                                </div>
-                            </Col>
-                            {!location.pathname.includes('my-location') && <Col md={6}>
-                                <p style={styles.label}>Your Rating</p>
-                                <div className="d-flex align-items-center">
-                                    {[1, 2, 3, 4, 5].map((star) => (
-                                        <FaStar
-                                            key={star}
-                                            style={{
-                                                ...styles.star,
-                                                ...(star <= (hover || business.ownRating) ? styles.filledStar : styles.emptyStar)
-                                            }}
-                                            onMouseEnter={() => setHover(star)}
-                                            onMouseLeave={() => setHover(0)}
-                                            onClick={() => !loading && handleRatingSubmit(star)}
-                                        />
-                                    ))}
-                                </div>
-                            </Col>}
-                        </Row>
-                    }
-
-                    {!location.pathname.includes('my-location') && <div className="mb-4">
-                        <h3 style={styles.sectionHeading}>Add a Review</h3>
-                        <Form.Group className="mb-3">
-                            <Form.Control
-                                as="textarea"
-                                rows={3}
-                                placeholder="Write your review here..."
-                                value={newReviewText}
-                                onChange={(e) => setNewReviewText(e.target.value)}
-                                style={styles.text}
-                            />
-                        </Form.Group>
-                        <Button
-                            variant="primary"
-                            onClick={handleAddReview}
-                            disabled={loading}
-                            className="w-100"
-                        >
-                            {loading ? "Submitting..." : "Submit Review"}
-                        </Button>
-                    </div>}
-
-                    {loading && business ? <>Loading...</> :
-                        <div>
-                            <h3 style={styles.sectionHeading}>Reviews</h3>
-                            {reviews.length > 0 ? (
-                                reviews.map((review, index) => (
-                                    <Card key={index} style={styles.reviewCard}>
-                                        <Card.Body style={{ display: 'flex', alignItems: 'center' }}>
-                                            <Image
-                                                src={review.user.profilePictureURL || defaultProfilePictureUrl}
-                                                roundedCircle
-                                                width={30}
-                                                height={30}
-                                                alt="User Profile"
-                                                style={{ marginRight: '10px' }}
-                                            />
-                                            <div>
-                                                <p style={styles.label}>{review.user.name}</p>
-                                                <p style={styles.text}>{review.reviewText}</p>
-                                            </div>
-                                        </Card.Body>
-                                    </Card>
+                                    </Col>
                                 ))
                             ) : (
-                                <p style={styles.text}>No reviews available</p>
+                                <Col>
+                                    <p style={styles.text}>No images available</p>
+                                </Col>
                             )}
+                        </Row>
+
+
+                        <div className="mb-4">
+                            <p style={styles.text}>{business.description}</p>
                         </div>
-                    }
-                </Card.Body>
-
-            </Card>
 
 
+                        <div className="mb-4">
+                            <p style={styles.text}>
+                                <span style={styles.label}>Address:</span> {business.address}
+                            </p>
+                            <p style={styles.text}>
+                                <span style={styles.label}>Coordinates:</span> ({business.location?.coordinates[1]}, {business.location?.coordinates[0]})
+                            </p>
+                        </div>
+
+                        {loading && business ? <>Loading...</> :
+                            <Row className="mb-4">
+                                <Col md={6}>
+                                    <p style={styles.label}>Average Rating</p>
+                                    <div className="d-flex align-items-center">
+                                        {[1, 2, 3, 4, 5].map((star) => (
+                                            <FaStar
+                                                key={star}
+                                                style={{
+                                                    ...styles.star,
+                                                    ...(star <= business.averageRating ? styles.filledStar : styles.emptyStar)
+                                                }}
+                                            />
+                                        ))}
+                                        <span style={styles.text} className="ms-2">
+                                            ({business?.averageRating?.toFixed(1)})
+                                        </span>
+                                    </div>
+                                </Col>
+                                {!location.pathname.includes('my-location') && <Col md={6}>
+                                    <p style={styles.label}>Your Rating</p>
+                                    <div className="d-flex align-items-center">
+                                        {[1, 2, 3, 4, 5].map((star) => (
+                                            <FaStar
+                                                key={star}
+                                                style={{
+                                                    ...styles.star,
+                                                    ...(star <= (hover || business.ownRating) ? styles.filledStar : styles.emptyStar)
+                                                }}
+                                                onMouseEnter={() => setHover(star)}
+                                                onMouseLeave={() => setHover(0)}
+                                                onClick={() => !loading && handleRatingSubmit(star)}
+                                            />
+                                        ))}
+                                    </div>
+                                </Col>}
+                            </Row>
+                        }
+
+                        {!location.pathname.includes('my-location') && <div className="mb-4">
+                            <h3 style={styles.sectionHeading}>Add a Review</h3>
+                            <Form.Group className="mb-3">
+                                <Form.Control
+                                    as="textarea"
+                                    rows={3}
+                                    placeholder="Write your review here..."
+                                    value={newReviewText}
+                                    onChange={(e) => setNewReviewText(e.target.value)}
+                                    style={styles.text}
+                                />
+                            </Form.Group>
+                            <Button
+                                variant="primary"
+                                onClick={handleAddReview}
+                                disabled={loading}
+                                className="w-100"
+                            >
+                                {loading ? "Submitting..." : "Submit Review"}
+                            </Button>
+                        </div>}
+
+                        {loading && business ? <>Loading...</> :
+                            <div>
+                                <h3 style={styles.sectionHeading}>Reviews</h3>
+                                {reviews.length > 0 ? (
+                                    reviews.map((review, index) => (
+                                        <div key={index} style={styles.reviewCard}>
+                                            <div style={{ display: 'flex', alignItems: 'center', marginLeft: "10px", paddingTop: "8px" }}>
+                                                <Image
+                                                    src={review.userDetails.profilePictureURL || defaultProfilePictureUrl}
+                                                    roundedCircle
+                                                    width={30}
+                                                    height={30}
+                                                    alt="User Profile"
+                                                    style={{ marginRight: '10px' }}
+                                                />
+                                                <div>
+                                                    <p style={styles.label}>{review.userDetails.name}</p>
+                                                    <p style={styles.text}>{review.reviewText}</p>
+                                                    <div className="d-flex align-items-center" style={{ marginBlock: "-12px 8px" }}>
+                                                        {[1, 2, 3, 4, 5].map((star) => (
+                                                            <FaStar
+                                                                key={star}
+                                                                style={{
+                                                                    fontSize: '12px',
+                                                                    color: star <= review.rating ? '#ffc107' : '#e4e5e9'
+                                                                }}
+                                                            />
+                                                        ))}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ))
+                                ) : (
+                                    <p style={styles.text}>No reviews available</p>
+                                )}
+                            </div>
+                        }
+                    </Card.Body>
+
+                </Card>
+
+            ) : <>Loading...</>}
         </>
     );
 };

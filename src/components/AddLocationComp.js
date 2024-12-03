@@ -6,9 +6,10 @@ import { uploadImages, createBusiness } from '../services/businessService'; // I
 import { useNavigate } from 'react-router-dom';
 // import { toast } from 'react-toastify';
 // import InfoWindowContent from './InfoWindow';
+import df from '../assets/marker.png'
 
 const AddLocationComp = ({ businesses }) => {
-    console.log(businesses)
+    console.log(businesses.businesses)
     const { user } = useContext(AuthContext);
     const navigate = useNavigate();
     // const [clickedLocation, setClickedLocation] = useState(null);
@@ -155,11 +156,25 @@ const AddLocationComp = ({ businesses }) => {
                 zoom={15}
                 onClick={handleMapClick}
             >
-                {businesses.length > 0 ? (
-                    businesses.map((business) => (
+                {businesses.businesses.length > 0 ? (
+                    businesses.businesses.map((business) => (
                         <MarkerF
-                            key={business.id}
-                            position={{ lat: business.latitude, lng: business.longitude }}
+                            position={{
+                                lat: Number(business.location.coordinates[1]),
+                                lng: Number(business.location.coordinates[0])
+                            }}
+                            // onClick={() => handleMarkerClick(business)}
+                            icon={{
+                                url: df,
+                                scaledSize: new window.google.maps.Size(24, 40),
+                                anchor: new window.google.maps.Point(20, 40),
+                            }}
+                            label={{
+                                text: `${business.averageRating.toFixed(1) + " " + business.name}`,
+                                className: 'marker-label',
+                                color: '#FFD700',
+                                fontSize: '12px',
+                            }}
                         />
                     ))
                 ) : (
