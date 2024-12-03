@@ -284,7 +284,7 @@ const AddLocationComp = ({ businesses }) => {
 
 
 
-                        <label>Amenities:</label>
+                        <label style={{ marginTop: "10px" }}>Amenities:</label>
                         <div style={{ marginBottom: '15px' }}>
                             {Object.keys(amenities).map(amenity => (
                                 <div key={amenity} className="form-check">
