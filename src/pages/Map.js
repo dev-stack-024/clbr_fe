@@ -153,8 +153,19 @@ const Map = () => {
                         >
                             <option value="">All Categories</option>
                             <option value="restaurant">Restaurant</option>
+                            <option value="cafe">Café</option>
+                            <option value="bar">Bar & Nightclub</option>
+                            <option value="shop">Shop</option>
                             <option value="retail">Retail</option>
                             <option value="service">Service</option>
+                            <option value="entertainment">Entertainment</option>
+                            <option value="fitness">Fitness & Gym</option>
+                            <option value="beauty">Beauty & Spa</option>
+                            <option value="healthcare">Healthcare</option>
+                            <option value="education">Education</option>
+                            <option value="automotive">Automotive</option>
+                            <option value="hotel">Hotel & Lodging</option>
+                            <option value="grocery">Grocery & Market</option>
                         </Form.Select>
 
                         <Form.Select

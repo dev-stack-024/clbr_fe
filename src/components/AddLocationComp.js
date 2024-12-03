@@ -3,12 +3,14 @@ import { GoogleMap, MarkerF } from '@react-google-maps/api';
 import { AuthContext } from '../context/AuthContext';
 import { Modal, Button } from 'react-bootstrap';
 import { uploadImages, createBusiness } from '../services/businessService'; // Import the service functions
+import { useNavigate } from 'react-router-dom';
 // import { toast } from 'react-toastify';
 // import InfoWindowContent from './InfoWindow';
 
 const AddLocationComp = ({ businesses }) => {
     console.log(businesses)
     const { user } = useContext(AuthContext);
+    const navigate = useNavigate();
     // const [clickedLocation, setClickedLocation] = useState(null);
     const [showModal, setShowModal] = useState(false);
     const mapContainerStyle = {
@@ -135,6 +137,7 @@ const AddLocationComp = ({ businesses }) => {
             });
             // setClickedLocation(null);
             setShowModal(false);
+            navigate(`/my-location/${user.id}`);
         } catch (error) {
             console.error('Error creating business:', error.message);
             // toast.error("Business adding failed")
@@ -209,8 +212,19 @@ const AddLocationComp = ({ businesses }) => {
                             >
                                 <option value="">Select Type</option>
                                 <option value="restaurant">Restaurant</option>
+                                <option value="cafe">Café</option>
+                                <option value="bar">Bar & Nightclub</option>
                                 <option value="shop">Shop</option>
+                                <option value="retail">Retail</option>
                                 <option value="service">Service</option>
+                                <option value="entertainment">Entertainment</option>
+                                <option value="fitness">Fitness & Gym</option>
+                                <option value="beauty">Beauty & Spa</option>
+                                <option value="healthcare">Healthcare</option>
+                                <option value="education">Education</option>
+                                <option value="automotive">Automotive</option>
+                                <option value="hotel">Hotel & Lodging</option>
+                                <option value="grocery">Grocery & Market</option>
                             </select>
                         </label>
 

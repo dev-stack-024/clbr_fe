@@ -30,10 +30,10 @@ const MapComponent = ({ businesses, userId }) => {
     };
 
     useEffect(() => {
-        if (userId) {
+        if (userId && businesses.length > 0) {
             setCurrentLocation({
-                lat: Number(businesses[0].location.coordinates[1]),
-                lng: Number(businesses[0].location.coordinates[0])
+                lat: Number(businesses[0]?.location?.coordinates[1]),
+                lng: Number(businesses[0]?.location?.coordinates[0])
             });
         } else if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(
