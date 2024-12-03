@@ -119,7 +119,24 @@ const Map = () => {
                         padding: '20px',
                         backgroundColor: '#f8f9fa',
                         boxShadow: '2px 0 5px rgba(0,0,0,0.1)',
-                        overflowY: 'auto'
+                        overflowY: 'auto',
+                        scrollbarWidth: 'thin',
+                        scrollbarColor: '#cbd5e0 #f8f9fa',
+                        '&::-webkit-scrollbar': {
+                            width: '8px'
+                        },
+                        '&::-webkit-scrollbar-track': {
+                            background: '#f8f9fa',
+                            borderRadius: '4px'
+                        },
+                        '&::-webkit-scrollbar-thumb': {
+                            backgroundColor: '#cbd5e0',
+                            borderRadius: '4px',
+                            border: '2px solid #f8f9fa'
+                        },
+                        '&::-webkit-scrollbar-thumb:hover': {
+                            backgroundColor: '#a0aec0'
+                        }
                     }}>
                         <Form.Control
                             type="search"

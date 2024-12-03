@@ -3,7 +3,7 @@ import { GoogleMap, MarkerF } from '@react-google-maps/api';
 import { AuthContext } from '../context/AuthContext';
 import { Modal, Button } from 'react-bootstrap';
 import { uploadImages, createBusiness } from '../services/businessService'; // Import the service functions
-import { toast } from 'react-toastify';
+// import { toast } from 'react-toastify';
 // import InfoWindowContent from './InfoWindow';
 
 const AddLocationComp = ({ businesses }) => {
@@ -47,6 +47,17 @@ const AddLocationComp = ({ businesses }) => {
         phone: '',
         description: '',
         images: [],
+
+    });
+
+    const [amenities, setAmenities] = useState({
+        parking: false,
+        wifi: false,
+        outdoorSeating: false,
+        creditCardAccepted: false,
+        delivery: false,
+        wheelchairAccessible: false,
+        petFriendly: false
     });
 
     // Get user's current location
@@ -100,7 +111,8 @@ const AddLocationComp = ({ businesses }) => {
             console.log(imageUrls)
             const updatedFormData = {
                 ...formData,
-                images: imageUrls,  // Set the images after they are uploaded
+                images: imageUrls,
+                amenities: amenities
             };
 
             console.log(formData)
@@ -269,6 +281,31 @@ const AddLocationComp = ({ businesses }) => {
                                 style={inputStyle}
                             />
                         </label>
+
+
+
+                        <label>Amenities:</label>
+                        <div style={{ marginBottom: '15px' }}>
+                            {Object.keys(amenities).map(amenity => (
+                                <div key={amenity} className="form-check">
+                                    <input
+                                        type="checkbox"
+                                        className="form-check-input"
+                                        id={amenity}
+                                        checked={amenities[amenity]}
+                                        onChange={(e) => {
+                                            setAmenities({
+                                                ...amenities,
+                                                [amenity]: e.target.checked
+                                            });
+                                        }}
+                                    />
+                                    <label className="form-check-label" htmlFor={amenity}>
+                                        {amenity.replace(/([A-Z])/g, ' $1').charAt(0).toUpperCase() + amenity.replace(/([A-Z])/g, ' $1').slice(1)}
+                                    </label>
+                                </div>
+                            ))}
+                        </div>
 
                         <Button type="submit" variant="success" style={{ marginTop: '20px' }}>
                             Add Business

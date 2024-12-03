@@ -58,32 +58,32 @@ const MapComponent = ({ businesses, userId }) => {
             <GoogleMap mapContainerStyle={{ width: '100%', height: '91vh' }} center={currentLocation} zoom={15}>
                 {businesses?.map((business) => (
                     <>
-                       
+
                         <MarkerF
-                        position={{
-                            lat: Number(business.location.coordinates[1]),
-                            lng: Number(business.location.coordinates[0])
-                        }}
-                        onClick={() => handleMarkerClick(business)}
-                        icon={{
-                            url: df,  
-                            scaledSize: new window.google.maps.Size(24, 40),
-                            anchor: new window.google.maps.Point(20, 40),
-                        }}
-                        label={{
-                            text: `${business.averageRating + " " + business.name}`,
-                            className: 'marker-label',
-                            color: '#FFD700',
-                            fontSize: '14px',
-                            fontWeight: 'bold'
-                        }}
+                            position={{
+                                lat: Number(business.location.coordinates[1]),
+                                lng: Number(business.location.coordinates[0])
+                            }}
+                            onClick={() => handleMarkerClick(business)}
+                            icon={{
+                                url: df,
+                                scaledSize: new window.google.maps.Size(24, 40),
+                                anchor: new window.google.maps.Point(20, 40),
+                            }}
+                            label={{
+                                text: `${business.averageRating.toFixed(1) + " " + business.name}`,
+                                className: 'marker-label',
+                                color: '#FFD700',
+                                fontSize: '14px',
+                                fontWeight: 'bold'
+                            }}
                         />
-               
+
                     </>
                 ))}
                 {!location.pathname.includes('my-location') &&
                     <MarkerF position={currentLocation} icon={{ url: 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png' }} />
-                    
+
                 }
             </GoogleMap>
 
