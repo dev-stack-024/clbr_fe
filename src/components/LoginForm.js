@@ -21,6 +21,7 @@ const LoginForm = () => {
       console.log(process.env.REACT_APP_GOOGLE_MAPS_API_KEY)
       console.log(process.env.REACT_APP_BACKEND_URL)
       const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/users/login`, { email, password });
+      console.log(response)
       login(response.data.token, response.data);
       if (response.data.user.role === "admin") {
         navigate('/admin');
@@ -29,7 +30,9 @@ const LoginForm = () => {
         navigate('/map');
       }
     } catch (err) {
-      setError('Invalid credentials');
+      console.log(err)
+      !err.response.data.error && setError('Invalid credentials');
+      alert(err.response.data.error)
     }
   };
 

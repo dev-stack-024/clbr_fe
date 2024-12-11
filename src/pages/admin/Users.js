@@ -34,6 +34,23 @@ const Users = () => {
     setCurrentPage(pageNumber);
   };
 
+  const toggleUserStatus = async (userId, currentStatus) => {
+    try {
+      await axios.put(
+        `${process.env.REACT_APP_BACKEND_URL}/api/users/toggle-status/${userId}`,
+        {}, // Empty request body
+        {
+          headers: {
+            Authorization: `Bearer ${user.token}`,
+          },
+        }
+      );
+      fetchUsers(currentPage);
+    } catch (error) {
+      console.error('Error toggling user status:', error);
+    }
+  };
+
   return (
     <Container className="mt-4 p-4">
       <h2>User Management</h2>
@@ -70,6 +87,15 @@ const Users = () => {
                   </td>
                   <td>
                     {/* Add action buttons here */}
+                    <td>
+                      <button
+                        variant={user.isActive ? 'danger' : 'success'}
+                        size="sm"
+                        onClick={() => toggleUserStatus(user._id, user.isActive)}
+                      >
+                        {user.isActive ? 'Block' : 'Unblock'}
+                      </button>
+                    </td>
                   </td>
                 </tr>
               ))}
@@ -77,15 +103,15 @@ const Users = () => {
           </Table>
 
           <Pagination>
-            <Pagination.First 
-              disabled={currentPage === 1} 
+            <Pagination.First
+              disabled={currentPage === 1}
               onClick={() => handlePageChange(1)}
             />
-            <Pagination.Prev 
-              disabled={currentPage === 1} 
+            <Pagination.Prev
+              disabled={currentPage === 1}
               onClick={() => handlePageChange(currentPage - 1)}
             />
-            
+
             {[...Array(totalPages)].map((_, index) => (
               <Pagination.Item
                 key={index + 1}
@@ -96,12 +122,12 @@ const Users = () => {
               </Pagination.Item>
             ))}
 
-            <Pagination.Next 
-              disabled={currentPage === totalPages} 
+            <Pagination.Next
+              disabled={currentPage === totalPages}
               onClick={() => handlePageChange(currentPage + 1)}
             />
-            <Pagination.Last 
-              disabled={currentPage === totalPages} 
+            <Pagination.Last
+              disabled={currentPage === totalPages}
               onClick={() => handlePageChange(totalPages)}
             />
           </Pagination>
